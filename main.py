@@ -106,8 +106,8 @@ async def on_message(message):
         await client.send_message(message.channel, newmsg)
         await client.delete_message(message)
 
-    elif "doffen" in message.content or "Doffen" in message.content:
-        p = random.choice(["doffen1.jpg", "doffen2.jpeg"])
+    elif "doffen" in message.content.lower():
+        p = random.choice(["doffen1.jpg", "doffen2.jpeg", "doffen3.png"])
         await client.send_file(message.channel, p)
 
 client.loop.create_task(commit_checker())
