@@ -102,7 +102,7 @@ async def on_message(message):
         async for msg in client.logs_from(
             message.channel, limit=1, before=message
         ):
-            newmsg = "*{0}*\n{1}".format(msg.author, msg.content[::-1])
+            newmsg = "*{0}*\n{1}".format(msg.author.name, msg.content[::-1])
             await client.delete_message(msg)
         await client.send_message(message.channel, newmsg)
         await client.delete_message(message)
