@@ -1,6 +1,7 @@
 import discord
 import asyncio
 import os
+import random
 import iron_cache
 from rss import RSSFeed
 
@@ -104,6 +105,10 @@ async def on_message(message):
             await client.delete_message(msg)
         await client.send_message(message.channel, newmsg)
         await client.delete_message(message)
+
+    elif "doffen" in message.content or "Doffen" in message.content:
+        p = random.choice(["doffen1.jpg", "doffen2.jpeg"])
+        await client.send_file(message.channel, p)
 
 client.loop.create_task(commit_checker())
 client.loop.create_task(issue_checker())
