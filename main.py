@@ -109,11 +109,11 @@ async def on_message(message):
         await client.send_message(message.channel, HELP_STRING)
         await client.delete_message(message)
 
-    elif message.content.startswith("!reverse"):
+    elif message.content.startswith("!revers"):
         async for msg in client.logs_from(
             message.channel, limit=1, before=message
         ):
-            newmsg = msg[::-1]
+            newmsg = msg.content[::-1]
             client.edit_message(msg, newmsg)
 
     # elif message.content.startswith("!assign"):
