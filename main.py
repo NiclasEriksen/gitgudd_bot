@@ -114,7 +114,8 @@ async def on_message(message):
             message.channel, limit=1, before=message
         ):
             newmsg = msg.content[::-1]
-            client.edit_message(msg, newmsg)
+            await client.edit_message(msg, newmsg)
+        await client.delete_message(message)
 
     # elif message.content.startswith("!assign"):
     #     s = message.content[8:] # remove !assign
