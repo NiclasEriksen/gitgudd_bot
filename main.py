@@ -111,7 +111,16 @@ async def on_message(message):
         global DOFFEN_COUNT
         DOFFEN_COUNT += message.content.lower().count("doffen")
         if DOFFEN_COUNT >= 3:
-            p = random.choice(["doffen1.jpg", "doffen2.jpeg", "doffen3.png"])
+            p = random.choice(
+                [
+                    "doffen1.jpg",
+                    "doffen2.jpeg",
+                    "doffen3.png",
+                    "doffen4.jpg",
+                    "doffen5.jpg",
+                    "doffen6.jpg"
+                ]
+            )
             await client.send_file(message.channel, p)
             DOFFEN_COUNT = 0
 
