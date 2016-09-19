@@ -23,6 +23,7 @@ HELP_STRING = """
 # Seconds to wait between checking RSS feeds and API
 COMMIT_TIMEOUT = 5
 ISSUE_TIMEOUT = 60
+DOFFEN_COUNT = 0
 # How long to wait to delete messages
 FEEDBACK_DEL_TIMER = 5
 
@@ -107,8 +108,13 @@ async def on_message(message):
         await client.delete_message(message)
 
     elif "doffen" in message.content.lower():
-        p = random.choice(["doffen1.jpg", "doffen2.jpeg", "doffen3.png"])
-        await client.send_file(message.channel, p)
+        global DOFFEN_COUNT
+        if DOFFEN_COUNT >= 3:
+            p = random.choice(["doffen1.jpg", "doffen2.jpeg", "doffen3.png"])
+            await client.send_file(message.channel, p)
+            DOFFEN_COUNT = 0
+        else:
+            DOFFEN_COUNT += 1
 
 client.loop.create_task(commit_checker())
 client.loop.create_task(issue_checker())
