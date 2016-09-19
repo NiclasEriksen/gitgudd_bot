@@ -109,12 +109,11 @@ async def on_message(message):
 
     elif "doffen" in message.content.lower():
         global DOFFEN_COUNT
+        DOFFEN_COUNT += message.content.lower().count("doffen")
         if DOFFEN_COUNT >= 3:
             p = random.choice(["doffen1.jpg", "doffen2.jpeg", "doffen3.png"])
             await client.send_file(message.channel, p)
             DOFFEN_COUNT = 0
-        else:
-            DOFFEN_COUNT += 1
 
 client.loop.create_task(commit_checker())
 client.loop.create_task(issue_checker())
