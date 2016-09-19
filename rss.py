@@ -2,8 +2,8 @@ import feedparser
 import datetime
 import requests
 
-COMMIT_URL = "https://github.com/godotengine/godot/commits/master.atom"
-ISSUE_URL = "https://api.github.com/repos/godotengine/godot/issues?sort=created"
+COMMIT_URL = "https://github.com/NiclasEriksen/godot_rpg/commits/master.atom"
+ISSUE_URL = "https://api.github.com/repos/NiclasEriksen/godot_rpg/issues?sort=created"
 
 
 class RSSFeed:
@@ -21,7 +21,7 @@ class RSSFeed:
             return None, stamp
 
     def format_commit_message(self, entry):
-        msg = ":outbox_tray: **New commit by {1}:**\n```{0}```\n<{2}>".format(
+        msg = ":outbox_tray: **Ny commit fra {1}:**\n```{0}```\n<{2}>".format(
             entry["title"],
             entry["author"],
             entry["link"]
@@ -94,10 +94,10 @@ class RSSFeed:
         try:
             e["pull_request"]
         except KeyError:
-            prefix = ":exclamation: **New issue:**"
+            prefix = ":exclamation: **Ny issue:**"
         else:
-            prefix = ":question: **New pull request:**"
-        msg = "{pf} *#{n} by {u}*\n```{t}```\n<{url}>".format(
+            prefix = ":question: **Ny pull request:**"
+        msg = "{pf} *#{n} av {u}*\n```{t}```\n<{url}>".format(
             pf=prefix,
             n=e["number"],
             u=e["user"]["login"],

@@ -13,25 +13,24 @@ TOKEN = os.environ.get("DISCORD_BOT_TOKEN")
 # Uncomment this instead if you'd like to specify it here
 # TOKEN = "YOUR_TOKEN"
 # Roles that users can assign themselves to, must be lower case.
-AVAILABLE_ROLES = [
-    "programmer",
-    "designer",
-    "artist",
-    "sound designer"
-]
+# AVAILABLE_ROLES = [
+#     "programmer",
+#     "designer",
+#     "artist",
+#     "sound designer"
+# ]
 # Default role for new members of server, must be lower case.
-DEFAULT_ROLE = "blue"
+# DEFAULT_ROLE = "blue"
 # Channel ID where bot will post github notifications
-COMMIT_CHANNEL = "225147946109370369"
-ISSUE_CHANNEL = "225146729509552128"
+COMMIT_CHANNEL = "222168837490081792"
+ISSUE_CHANNEL = "222168837490081792"
 #COMMIT_CHANNEL = "225071177721184256"
 #ISSUE_CHANNEL = COMMIT_CHANNEL
 # Message that bot returns on !help
 HELP_STRING = """
-:book: **Commands:**
-!assign [role]: *assign yourself to one of the available roles.*\n
-!unassign [role]: *unassign yourself from a role.*\n
-!roles: *list available roles.*
+:book: **Kommandoer:**
+!help: *denne menyen*\n
+*... og ingenting mer.*
 """
 # Seconds to wait between checking RSS feeds and API
 COMMIT_TIMEOUT = 5
@@ -106,106 +105,103 @@ async def issue_checker():
 @client.event
 async def on_message(message):
 
-    if message.channel.name != "botspam":
-        return
-
     if message.content.startswith("!help"):
         await client.send_message(message.channel, HELP_STRING)
         await client.delete_message(message)
 
-    elif message.content.startswith("!assign"):
-        s = message.content[8:] # remove !assign
-        if not len(s) or not message.content[7] == " ":
-            tmp = await client.send_message(
-                message.channel,
-                "Usage: !assign [role]"
-            )
-            await delete_edit_timer(tmp, FEEDBACK_DEL_TIMER, error=True, call_msg=message)
-        else:
-            newrole = s
-            roles = message.server.roles
-            for r in roles:
-                if r.name.lower() == newrole.lower():
-                    if r.name.lower() in AVAILABLE_ROLES:
-                        if not r in message.author.roles:
-                            await client.add_roles(message.author, r)
-                            tmp = await client.send_message(
-                                message.channel, ":white_check_mark: User {0} added to {1}.".format(
-                                    message.author.name, r.name
-                                )
-                            )
-                            await delete_edit_timer(tmp, FEEDBACK_DEL_TIMER, call_msg=message)
-                        else:
-                            tmp = await client.send_message(
-                                message.channel,
-                                "You already have that role."
-                            )
-                            await delete_edit_timer(
-                                tmp, FEEDBACK_DEL_TIMER, error=True, call_msg=message
-                            )
-                    else:
-                        tmp = await client.send_message(
-                            message.channel,
-                            ":no_entry: *You're not allowed to assign yourself to that role.*"
-                        )
-                        await delete_edit_timer(tmp, FEEDBACK_DEL_TIMER, error=True, call_msg=message)
-                    break
-            else:
-                tmp = await client.send_message(
-                    message.channel,
-                    ":no_entry: **{0}** <- *Role not found.*".format(
-                        newrole.upper()
-                    )
-                )
-                await delete_edit_timer(tmp, FEEDBACK_DEL_TIMER, error=True, call_msg=message)
+    # elif message.content.startswith("!assign"):
+    #     s = message.content[8:] # remove !assign
+    #     if not len(s) or not message.content[7] == " ":
+    #         tmp = await client.send_message(
+    #             message.channel,
+    #             "Usage: !assign [role]"
+    #         )
+    #         await delete_edit_timer(tmp, FEEDBACK_DEL_TIMER, error=True, call_msg=message)
+    #     else:
+    #         newrole = s
+    #         roles = message.server.roles
+    #         for r in roles:
+    #             if r.name.lower() == newrole.lower():
+    #                 if r.name.lower() in AVAILABLE_ROLES:
+    #                     if not r in message.author.roles:
+    #                         await client.add_roles(message.author, r)
+    #                         tmp = await client.send_message(
+    #                             message.channel, ":white_check_mark: User {0} added to {1}.".format(
+    #                                 message.author.name, r.name
+    #                             )
+    #                         )
+    #                         await delete_edit_timer(tmp, FEEDBACK_DEL_TIMER, call_msg=message)
+    #                     else:
+    #                         tmp = await client.send_message(
+    #                             message.channel,
+    #                             "You already have that role."
+    #                         )
+    #                         await delete_edit_timer(
+    #                             tmp, FEEDBACK_DEL_TIMER, error=True, call_msg=message
+    #                         )
+    #                 else:
+    #                     tmp = await client.send_message(
+    #                         message.channel,
+    #                         ":no_entry: *You're not allowed to assign yourself to that role.*"
+    #                     )
+    #                     await delete_edit_timer(tmp, FEEDBACK_DEL_TIMER, error=True, call_msg=message)
+    #                 break
+    #         else:
+    #             tmp = await client.send_message(
+    #                 message.channel,
+    #                 ":no_entry: **{0}** <- *Role not found.*".format(
+    #                     newrole.upper()
+    #                 )
+    #             )
+    #             await delete_edit_timer(tmp, FEEDBACK_DEL_TIMER, error=True, call_msg=message)
+    #
+    # elif message.content.startswith("!unassign"):
+    #     s = message.content[10:] # remove !unassign
+    #     if not len(s) or not message.content[9] == " ":
+    #         tmp = await client.send_message(
+    #             message.channel,
+    #             "Usage: !unassign [role]"
+    #         )
+    #         await delete_edit_timer(tmp, FEEDBACK_DEL_TIMER, call_msg=message)
+    #     else:
+    #         oldrole = s
+    #         roles = message.server.roles
+    #         for r in message.author.roles:
+    #             # print(r.name.lower())
+    #             if r.name.lower() == oldrole.lower():
+    #                 # print(r.name, "<-FOUND")
+    #                 await client.remove_roles(message.author, r)
+    #                 tmp = await client.send_message(message.channel, ":white_check_mark: Role was removed.")
+    #                 await delete_edit_timer(tmp, FEEDBACK_DEL_TIMER, call_msg=message)
+    #                 break
+    #         else:
+    #             tmp = await client.send_message(
+    #                 message.channel,
+    #                 ":no_entry: **{0}** <- You don't have that role.".format(
+    #                     oldrole.upper()
+    #                 )
+    #             )
+    #             await delete_edit_timer(tmp, FEEDBACK_DEL_TIMER, error=True, call_msg=message)
+    # elif message.content.startswith("!roles"):
+    #     s = ":scroll: **Available roles:**\n"
+    #     s += "```\n"
+    #     for i, r in enumerate(AVAILABLE_ROLES):
+    #         s += "{0}".format(r.upper())
+    #         if not i == len(AVAILABLE_ROLES) - 1:
+    #             s += ", "
+    #     s += "```"
+    #     await client.send_message(
+    #         message.channel,
+    #         s
+    #     )
+    #     await client.delete_message(message)
 
-    elif message.content.startswith("!unassign"):
-        s = message.content[10:] # remove !unassign
-        if not len(s) or not message.content[9] == " ":
-            tmp = await client.send_message(
-                message.channel,
-                "Usage: !unassign [role]"
-            )
-            await delete_edit_timer(tmp, FEEDBACK_DEL_TIMER, call_msg=message)
-        else:
-            oldrole = s
-            roles = message.server.roles
-            for r in message.author.roles:
-                # print(r.name.lower())
-                if r.name.lower() == oldrole.lower():
-                    # print(r.name, "<-FOUND")
-                    await client.remove_roles(message.author, r)
-                    tmp = await client.send_message(message.channel, ":white_check_mark: Role was removed.")
-                    await delete_edit_timer(tmp, FEEDBACK_DEL_TIMER, call_msg=message)
-                    break
-            else:
-                tmp = await client.send_message(
-                    message.channel,
-                    ":no_entry: **{0}** <- You don't have that role.".format(
-                        oldrole.upper()
-                    )
-                )
-                await delete_edit_timer(tmp, FEEDBACK_DEL_TIMER, error=True, call_msg=message)
-    elif message.content.startswith("!roles"):
-        s = ":scroll: **Available roles:**\n"
-        s += "```\n"
-        for i, r in enumerate(AVAILABLE_ROLES):
-            s += "{0}".format(r.upper())
-            if not i == len(AVAILABLE_ROLES) - 1:
-                s += ", "
-        s += "```"
-        await client.send_message(
-            message.channel,
-            s
-        )
-        await client.delete_message(message)
-
-
-@client.event
-async def on_member_join(m):
-    for r in m.server.roles:
-        if r.name.lower() == DEFAULT_ROLE.lower():
-            await client.add_roles(m, r)
+#
+# @client.event
+# async def on_member_join(m):
+#     for r in m.server.roles:
+#         if r.name.lower() == DEFAULT_ROLE.lower():
+#             await client.add_roles(m, r)
 
 
 client.loop.create_task(commit_checker())
