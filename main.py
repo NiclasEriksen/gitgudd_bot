@@ -3,6 +3,7 @@ import asyncio
 import os
 import random
 import iron_cache
+import json
 from rss import RSSFeed
 
 client = discord.Client()
@@ -91,6 +92,10 @@ async def issue_checker():
                 await client.send_message(channel, msg)
         await asyncio.sleep(ISSUE_TIMEOUT)
 
+async get_quote():
+    # http://quotes.stormconsultancy.co.uk/random.json
+    pass
+
 @client.event
 async def on_message(message):
 
@@ -106,6 +111,11 @@ async def on_message(message):
             await client.delete_message(msg)
         await client.send_message(message.channel, newmsg)
         await client.delete_message(message)
+
+    elif message.content.startswith("!quote"):
+        ch = message.channel
+        await client.delete_message(message)
+        a = await get_quote()
 
     elif "doffen" in message.content.lower():
         global DOFFEN_COUNT
