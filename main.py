@@ -4,7 +4,7 @@ import os
 import random
 import iron_cache
 import json
-import urllib
+import urllib.request
 from rss import RSSFeed
 
 client = discord.Client()
@@ -96,12 +96,19 @@ async def issue_checker():
 async def get_quote():
     # http://quotes.stormconsultancy.co.uk/random.json
     try:
-        js = urllib.request.urlopen(
+        r = urllib.request.urlopen(
             "http://quotes.stormconsultancy.co.uk/random.json"
         )
+        q = r.read().decode("utf-8")
+        js = json.loads(q)
     except:
         return False
-    return "Test"
+    else:
+        msg = "**{0}:**\n*{1}*".format(
+            js["author"],
+            js["quote"]
+        )
+        return msg
 
 @client.event
 async def on_message(message):
