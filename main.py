@@ -44,7 +44,7 @@ async def trump_face(msg):
         ":kissing:"
     ]
     face_msg = await client.send_message(msg.channel, ":slight_smile:")
-    await for face in faces:
+    for face in faces:
         await asyncio.sleep(0.75)
         await client.edit_message(face_msg, face)
     await asyncio.sleep(1)
