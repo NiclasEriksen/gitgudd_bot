@@ -92,7 +92,7 @@ async def issue_checker():
                 await client.send_message(channel, msg)
         await asyncio.sleep(ISSUE_TIMEOUT)
 
-async get_quote():
+async def get_quote():
     # http://quotes.stormconsultancy.co.uk/random.json
     pass
 
