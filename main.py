@@ -32,6 +32,25 @@ FEEDBACK_DEL_TIMER = 5
 cache = iron_cache.IronCache()
 
 
+async def trump_face(msg):
+    faces = [
+        ":expressionless:",
+        ":smirk:",
+        ":weary:",
+        ":yum:",
+        ":tired_face:",
+        ":smile:",
+        ":hushed:",
+        ":kissing:"
+    ]
+    face_msg = await client.send_message(msg.channel, ":slight_smile:")
+    for face in faces:
+        await asyncio.sleep(0.5)
+        await client.edit_message(face_msg, face)
+    await asyncio.sleep(1)
+    await client.delete_message(face_msg)
+
+
 async def delete_edit_timer(msg, time, error=False, call_msg=None):
     ws = ":white_small_square:"
     bs = ":black_small_square:"
@@ -132,6 +151,10 @@ async def on_message(message):
         a = await get_quote()
         if a:
             await client.send_message(ch, a)
+
+    elif message.content.startswith("!trump"):
+        await client.delete_message(message)
+        await trump_face(message)
 
     elif "doffen" in message.content.lower():
         global DOFFEN_COUNT
