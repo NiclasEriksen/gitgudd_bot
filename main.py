@@ -4,6 +4,7 @@ import os
 import random
 import iron_cache
 import json
+import urllib
 from rss import RSSFeed
 
 client = discord.Client()
@@ -94,7 +95,13 @@ async def issue_checker():
 
 async def get_quote():
     # http://quotes.stormconsultancy.co.uk/random.json
-    pass
+    try:
+        js = urllib.request.urlopen(
+            "http://quotes.stormconsultancy.co.uk/random.json"
+        )
+    except:
+        return False
+    return "Test"
 
 @client.event
 async def on_message(message):
@@ -116,6 +123,8 @@ async def on_message(message):
         ch = message.channel
         await client.delete_message(message)
         a = await get_quote()
+        if a:
+            await client.send_message(ch, a)
 
     elif "doffen" in message.content.lower():
         global DOFFEN_COUNT
