@@ -37,9 +37,9 @@ async def trump_face(msg):
         ":expressionless:",
         ":smirk:",
         ":weary:",
-        ":yum:",
+        ":relieved:",
         ":tired_face:",
-        ":smile:",
+        ":struck_out_tongue:",
         ":hushed:",
         ":kissing:"
     ]
