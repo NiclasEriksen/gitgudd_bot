@@ -19,7 +19,10 @@ class RSSFeed:
         msg = None
         d = feedparser.parse(self.forum_url)
         latest = d["items"][:5]
-        old_stamp = datetime.datetime.fromtimestamp(float(stamp))
+        try:
+            old_stamp = datetime.datetime.fromtimestamp(float(stamp))
+        except ValueError:
+            old_stamp = datetime.datetime.now()
         for thread in reversed(latest):
             th_stamp = datetime.datetime.fromtimestamp(
                 mktime(thread["published_parsed"])
@@ -29,7 +32,7 @@ class RSSFeed:
                 print(mktime(thread["published_parsed"]))
                 return msg, float(mktime(thread["published_parsed"]))
         else:
-            return False, stamp
+            return False, float(mktime(old_stamp)
 
     def format_forum_message(self, thread):
         t = thread["title"]
