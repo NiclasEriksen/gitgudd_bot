@@ -32,7 +32,7 @@ class RSSFeed:
                 print(mktime(thread["published_parsed"]))
                 return msg, float(mktime(thread["published_parsed"]))
         else:
-            return False, float(mktime(old_stamp)
+            return False, float(mktime(old_stamp))
 
     def format_forum_message(self, thread):
         t = thread["title"]
