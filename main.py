@@ -10,12 +10,13 @@ from rss import RSSFeed
 client = discord.Client()
 feed = RSSFeed()    # Initialize RSS-scraper, see rss.py for config.
 
-### CONFIG ###
+# CONFIG #
 # If you have set your token as an environment variable
 TOKEN = os.environ.get("DISCORD_BOT_TOKEN")
 # Channel ID where bot will post github notifications
 COMMIT_CHANNEL = "222168837490081792"
 ISSUE_CHANNEL = "222168837490081792"
+FORUM_CHANNEL = "222168837490081792"
 # Message that bot returns on !help
 HELP_STRING = """
 :book: **Kommandoer:**
@@ -24,6 +25,7 @@ HELP_STRING = """
 """
 # Seconds to wait between checking RSS feeds and API
 COMMIT_TIMEOUT = 5
+FORUM_TIMEOUT = 10
 ISSUE_TIMEOUT = 60
 DOFFEN_COUNT = 0
 # How long to wait to delete messages
@@ -63,6 +65,7 @@ async def delete_edit_timer(msg, time, error=False, call_msg=None):
     if call_msg:
         await client.delete_message(call_msg)
 
+
 @client.event
 async def on_ready():
     print("Logged in as: {0}--{1}".format(client.user.name, client.user.id))
@@ -90,6 +93,27 @@ async def commit_checker():
                 await client.send_message(channel, c_msg)
         await asyncio.sleep(COMMIT_TIMEOUT)
 
+async def forum_checker():
+    await client.wait_until_ready()
+    channel = discord.Object(id=FORUM_CHANNEL)
+    while not client.is_closed:
+        try:
+            fstamp = cache.get(cache="git_stamps", key="forum").value
+        except:
+            fstamp = "missing"
+            print("No stamp found for commits.")
+        f_msg, stamp = feed.check_forum(fstamp)
+        if not fstamp == stamp:
+            cache.put(cache="git_stamps", key="forum", value=stamp)
+        if f_msg:
+            async for log in client.logs_from(channel, limit=20):
+                if log.content == f_msg:
+                    print("Forum thread already posted, abort!")
+                    break
+            else:
+                await client.send_message(channel, f_msg)
+        await asyncio.sleep(FORUM_TIMEOUT)
+
 async def issue_checker():
     await client.wait_until_ready()
     channel = discord.Object(id=ISSUE_CHANNEL)
@@ -112,6 +136,7 @@ async def issue_checker():
                 await client.send_message(channel, msg)
         await asyncio.sleep(ISSUE_TIMEOUT)
 
+
 async def get_quote():
     # http://quotes.stormconsultancy.co.uk/random.json
     try:
@@ -128,6 +153,7 @@ async def get_quote():
             js["quote"]
         )
         return msg
+
 
 @client.event
 async def on_message(message):
@@ -175,4 +201,5 @@ async def on_message(message):
 
 client.loop.create_task(commit_checker())
 client.loop.create_task(issue_checker())
+client.loop.create_task(forum_checker())
 client.run(TOKEN)
