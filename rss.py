@@ -22,7 +22,9 @@ class RSSFeed:
         try:
             old_stamp = datetime.datetime.fromtimestamp(float(stamp))
         except ValueError:
+            print("Stamp invalid, making new from current time.")
             old_stamp = datetime.datetime.now()
+            stamp = float(mktime(old_stamp.utctimetuple()))
         for thread in reversed(latest):
             th_stamp = datetime.datetime.fromtimestamp(
                 mktime(thread["published_parsed"])
@@ -30,7 +32,7 @@ class RSSFeed:
             if th_stamp > old_stamp:
                 msg = self.format_forum_message(thread)
                 print("New forum thread found, posting.")
-                return msg, float(mktime(thread["published_parsed"]))
+                return msg, stamp
         else:
             return False, float(mktime(old_stamp.utctimetuple()))
 
