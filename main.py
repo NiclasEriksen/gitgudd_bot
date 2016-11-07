@@ -101,7 +101,7 @@ async def forum_checker():
             fstamp = cache.get(cache="git_stamps", key="forum").value
         except:
             fstamp = "missing"
-            print("No stamp found for commits.")
+            print("No stamp found for forum.")
         f_msg, stamp = feed.check_forum(fstamp)
         if not fstamp == stamp:
             cache.put(cache="git_stamps", key="forum", value=stamp)
