@@ -15,7 +15,7 @@ class RSSFeed:
         self.issue_url = ISSUE_URL
         self.forum_url = FORUM_URL
 
-    def parse_forum(self, stamp):
+    def check_forum(self, stamp):
         msg = None
         d = feedparser.parse(self.forum_url)
         latest = d["items"][:5]
