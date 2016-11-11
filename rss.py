@@ -32,7 +32,7 @@ class RSSFeed:
             if th_stamp > old_stamp:
                 msg = self.format_forum_message(thread)
                 print("New forum thread found, posting.")
-                return msg, mktime(thread["published_parsed"])s
+                return msg, mktime(thread["published_parsed"])
         else:
             return False, float(mktime(old_stamp.utctimetuple()))
 
