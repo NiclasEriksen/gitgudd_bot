@@ -30,6 +30,8 @@ ISSUE_TIMEOUT = 60
 DOFFEN_COUNT = 0
 # How long to wait to delete messages
 FEEDBACK_DEL_TIMER = 5
+# How much XP to give on each messages
+BASE_XP = 1
 
 cache = iron_cache.IronCache()
 
@@ -161,14 +163,18 @@ async def on_message(message):
     id = message.author.id
     if message.author.id == client.user.id:
         print("Not granting XP to bot.")
+    else:
+        try:
+            curxp = int(
+                cache.get(cache="godot_userxp", key=id).value
+            ) + BASE_XP
+        except:
+            print("No cache point for user {0} with id {1}".format(
+                message.author.name, message.author.id
+            ))
+            curxp = 0
 
-    try:
-        curxp = cache.get(cache="godot_userxp", key=id).value
-    except:
-        print("No cache point for user {0} with id {1}".format(
-            message.author.name, message.author.id
-        ))
-        curxp = 0
+        cache.put(cache="godot_userxp", key=id, value=curxp)
 
 
     if message.content.startswith("!help"):
