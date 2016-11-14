@@ -187,7 +187,7 @@ async def on_message(message):
         except:
             xp = 0
         await client.send_message(
-            message.channel, "{0}'s XP: [**{1}**]".format(
+            message.channel, "**{0}**'s current xp: **[{1}]**".format(
                 message.author.name, xp
             )
         )
