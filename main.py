@@ -162,7 +162,7 @@ async def on_message(message):
     try:
         curxp = cache.get(cache="godot_userxp", key=id).value
     except:
-        print("No cache point for user {0} with id {1]}".format(
+        print("No cache point for user {0} with id {1}".format(
             message.author.name, message.author.id
         ))
         curxp = 0
