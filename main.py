@@ -181,6 +181,15 @@ async def on_message(message):
         await client.send_message(message.channel, HELP_STRING)
         await client.delete_message(message)
 
+    elif message.content.startswith("!xp"):
+        try:
+            xp = cache.get(cache="godot_userxp", key=id).value
+        except:
+            xp = 0
+        await client.send_message(message.channel, "Your XP: **{0}**".format(
+            xp
+        ))
+
     elif message.content.startswith("!revers"):
         async for msg in client.logs_from(
             message.channel, limit=1, before=message
