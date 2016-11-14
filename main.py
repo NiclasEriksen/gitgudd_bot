@@ -159,6 +159,9 @@ async def get_quote():
 async def on_message(message):
 
     id = message.author.id
+    if message.author.id == client.user.id:
+        print("Not granting XP to bot.")
+
     try:
         curxp = cache.get(cache="godot_userxp", key=id).value
     except:
@@ -166,6 +169,7 @@ async def on_message(message):
             message.author.name, message.author.id
         ))
         curxp = 0
+
 
     if message.content.startswith("!help"):
         await client.send_message(message.channel, HELP_STRING)
