@@ -158,6 +158,9 @@ async def get_quote():
 @client.event
 async def on_message(message):
 
+    id = message.author.id
+    curxp = cache.get(cache="godot_userxp", key=id).value
+
     if message.content.startswith("!help"):
         await client.send_message(message.channel, HELP_STRING)
         await client.delete_message(message)
@@ -201,5 +204,5 @@ async def on_message(message):
 
 client.loop.create_task(commit_checker())
 client.loop.create_task(issue_checker())
-client.loop.create_task(forum_checker())
+# client.loop.create_task(forum_checker())
 client.run(TOKEN)
