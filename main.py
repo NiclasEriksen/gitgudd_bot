@@ -165,17 +165,12 @@ async def on_message(message):
         print("Not granting XP to bot.")
     else:
         try:
-            curxp = int(
-                cache.get(cache="godot_userxp", key=id).value
-            ) + BASE_XP
+            cache.increment(cache="godot_userxp", key=id, amount=BASE_XP)
         except:
             print("No cache point for user {0} with id {1}".format(
                 message.author.name, message.author.id
             ))
-            curxp = 0
-
-        cache.put(cache="godot_userxp", key=id, value=curxp)
-
+            cache.put(cache="godot_userxp", key=id, value=0)
 
     if message.content.startswith("!help"):
         await client.send_message(message.channel, HELP_STRING)
