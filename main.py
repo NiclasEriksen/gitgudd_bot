@@ -159,7 +159,13 @@ async def get_quote():
 async def on_message(message):
 
     id = message.author.id
-    curxp = cache.get(cache="godot_userxp", key=id).value
+    try:
+        curxp = cache.get(cache="godot_userxp", key=id).value
+    except:
+        print("No cache point for user {0} with id {1]}".format(
+            message.author.name, message.author.id
+        ))
+        curxp = 0
 
     if message.content.startswith("!help"):
         await client.send_message(message.channel, HELP_STRING)
