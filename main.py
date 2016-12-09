@@ -202,6 +202,14 @@ async def on_message(message):
             await client.send_file(message.channel, p)
             DOFFEN_COUNT = 0
 
+    for m in message.mentions:
+        if m.id == client.user.id:
+            await client.send_message(
+                message.channel,
+                "Ikke ta på mæ."
+            )
+            break
+
     # if message.author.id == "256823993368182785":
     #     await client.send_message(
     #         message.channel,
