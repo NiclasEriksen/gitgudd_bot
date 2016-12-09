@@ -160,32 +160,10 @@ async def get_quote():
 @client.event
 async def on_message(message):
 
-    id = message.author.id
-    if message.author.id == client.user.id:
-        print("Not granting XP to bot.")
-    else:
-        try:
-            cache.increment(cache="godot_userxp", key=id, amount=BASE_XP)
-        except:
-            print("No cache point for user {0} with id {1}".format(
-                message.author.name, message.author.id
-            ))
-            cache.put(cache="godot_userxp", key=id, value=0)
-
     if message.content.startswith("!help"):
         await client.send_message(message.channel, HELP_STRING)
         await client.delete_message(message)
 
-    elif message.content.startswith("!xp"):
-        try:
-            xp = cache.get(cache="godot_userxp", key=id).value
-        except:
-            xp = 0
-        await client.send_message(
-            message.channel, "**{0}**'s current xp: **[{1}]**".format(
-                message.author.name, xp
-            )
-        )
 
     elif message.content.startswith("!revers"):
         async for msg in client.logs_from(
