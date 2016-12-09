@@ -224,6 +224,12 @@ async def on_message(message):
             await client.send_file(message.channel, p)
             DOFFEN_COUNT = 0
 
+    if message.author.id == "256823993368182785":
+        await client.send_message(
+            message.channel,
+            "Hold kjeft {0}.".format(member.mention)
+        )
+
 client.loop.create_task(commit_checker())
 client.loop.create_task(issue_checker())
 # client.loop.create_task(forum_checker())
