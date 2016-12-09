@@ -205,7 +205,7 @@ async def on_message(message):
     if message.author.id == "256823993368182785":
         await client.send_message(
             message.channel,
-            "Hold kjeft {0}.".format(member.mention)
+            "Hold kjeft {0}.".format(message.author.mention)
         )
 
 client.loop.create_task(commit_checker())
