@@ -76,7 +76,7 @@ class Prat:
         if self.sub_list:
             return self.sub_list.pop(0)
 
-        if not random.randint(0, 1):
+        if not random.randint(0, 32):
             self.sub_list.append("```css\nSYSTEM RESTORED\nPLEASE CONTACT ADMINISTRATOR IF THIS PERSISTS.```")
             return korrupt() + "\n```haskell" + "\n---------------------------------------\n        SYSTEM CRASH DETECTED!\nATTEMPTING TO RESTORE PREVIOUS STATE..." + "```"
 
