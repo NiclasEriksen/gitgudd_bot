@@ -58,6 +58,7 @@ KLAG = [
     """,
     ":two_hearts:",
     "Ni av ti lega anbefale at du slutte med det der.",
+    "Jævla mas da!"
 ]
 
 
@@ -81,8 +82,3 @@ class Prat:
             self.sub_list = KLAG[index].copy()
             return self.sub_list.pop(0)
         return KLAG[index]
-
-
-p = Prat()
-for i in range(10):
-    print(p.klage())
