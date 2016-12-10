@@ -78,7 +78,7 @@ class Prat:
 
         if not random.randint(0, 1):
             self.sub_list.append("```SYSTEM RESTORED\nPLEASE CONTACT ADMINISTRATOR IF THIS PERSISTS.```")
-            return korrupt() + "\n----------------------\nSYSTEM CRASH DETECTED, ATTEMPTING TO RESTORE PREVIOUS STATE..."
+            return korrupt() + "\n```" + "---------------------------------------\n        SYSTEM CRASH DETECTED!\nATTEMPTING TO RESTORE PREVIOUS STATE..."
 
 
         while True:
