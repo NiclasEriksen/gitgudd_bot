@@ -6,8 +6,10 @@ import iron_cache
 import json
 import urllib.request
 from rss import RSSFeed
+from snakk import Prat
 
 client = discord.Client()
+prat = Prat()
 feed = RSSFeed()    # Initialize RSS-scraper, see rss.py for config.
 
 # CONFIG #
@@ -206,7 +208,7 @@ async def on_message(message):
         if m.id == client.user.id:
             await client.send_message(
                 message.channel,
-                "Ikke ta på mæ."
+                prat.klage()
             )
             break
 
