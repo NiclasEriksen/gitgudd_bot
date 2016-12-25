@@ -3,8 +3,8 @@ import datetime
 from time import mktime, sleep
 import requests
 
-COMMIT_URL = "https://github.com/NiclasEriksen/godot_rpg/commits/master.atom"
-ISSUE_URL = "https://api.github.com/repos/NiclasEriksen/godot_rpg/issues?sort=created"
+COMMIT_URL = "https://github.com/NiclasEriksen/lfm-healer/commits/master.atom"
+ISSUE_URL = "https://api.github.com/repos/NiclasEriksen/lfm-healer/issues?sort=created"
 FORUM_URL = "https://godotdevelopers.org/forum/discussions/feed.rss"
 
 
