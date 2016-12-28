@@ -182,6 +182,6 @@ if __name__ == "__main__":
     from time import sleep
     f = RSSFeed()
     while True:
-        print(f.check_issue())
+        print(f.check_file("2016-12-28T20:02:57.848229Z"))
         # print(f.check_commit())
-        sleep(5)
+        sleep(10)
