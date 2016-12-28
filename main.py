@@ -237,6 +237,7 @@ async def on_message(message):
     #     )
 
 client.loop.create_task(commit_checker())
+client.loop.create_task(gdrive_checker())
 #client.loop.create_task(issue_checker())
 # client.loop.create_task(forum_checker())
 client.run(TOKEN)
