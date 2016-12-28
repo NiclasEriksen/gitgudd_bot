@@ -43,7 +43,7 @@ class RSSFeed:
             "%Y-%m-%dT%H:%M:%S.%fZ"
         )
         if filestamp > old_stamp:
-            msg = "**APK oppdatert:**\n<{0}>".format(apk["alternateLink"])
+            msg = ":calling: **APK oppdatert:**\n<{0}>".format(apk["alternateLink"])
             return msg, apk["modifiedDate"]
         else:
             return None, stamp
