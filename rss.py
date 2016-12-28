@@ -1,11 +1,14 @@
 import feedparser
 import datetime
+from pydrive.auth import GoogleAuth
+from pydrive.drive import GoogleDrive
 from time import mktime, sleep
 import requests
 
 COMMIT_URL = "https://github.com/NiclasEriksen/lfm-healer/commits/master.atom"
 ISSUE_URL = "https://api.github.com/repos/NiclasEriksen/lfm-healer/issues?sort=created"
 FORUM_URL = "https://godotdevelopers.org/forum/discussions/feed.rss"
+FILE_ID = "0By_JUDss2hEKXzRWRVNNOUtyYmM"
 
 
 class RSSFeed:
@@ -14,6 +17,36 @@ class RSSFeed:
         self.commit_url = COMMIT_URL
         self.issue_url = ISSUE_URL
         self.forum_url = FORUM_URL
+        gauth = GoogleAuth()
+        gauth.LocalWebserverAuth()
+        self.drive = GoogleDrive(gauth)
+
+    def check_file(self, stamp):
+        try:
+            old_stamp = datetime.datetime.strptime(
+                stamp,
+                "%Y-%m-%dT%H:%M:%S.%fZ"
+            )
+        except ValueError:
+            old_stamp = datetime.datetime.utcnow()
+            print("Invalid stamp (or none): {0}".format(stamp))
+            stamp = datetime.datetime.strftime(
+                old_stamp,
+                "%Y-%m-%dT%H:%M:%S.%fZ"
+            )
+            return None, stamp
+
+        apk = self.drive.CreateFile({"id": FILE_ID})
+        apk.FetchMetadata(fetch_all=True)
+        filestamp = datetime.datetime.strptime(
+            apk["modifiedDate"],
+            "%Y-%m-%dT%H:%M:%S.%fZ"
+        )
+        if filestamp > old_stamp:
+            msg = "**APK oppdatert:**\n<{0}>".format(apk["alternateLink"])
+            return msg, apk["modifiedDate"]
+        else:
+            return None, stamp
 
     def check_forum(self, stamp):
         msg = None

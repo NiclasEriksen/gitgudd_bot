@@ -29,6 +29,7 @@ HELP_STRING = """
 COMMIT_TIMEOUT = 5
 FORUM_TIMEOUT = 10
 ISSUE_TIMEOUT = 60
+GDRIVE_TIMEOUT = 20
 DOFFEN_COUNT = 0
 # How long to wait to delete messages
 FEEDBACK_DEL_TIMER = 5
@@ -74,6 +75,23 @@ async def delete_edit_timer(msg, time, error=False, call_msg=None):
 async def on_ready():
     print("Logged in as: {0}--{1}".format(client.user.name, client.user.id))
     print("------")
+
+async def gdrive_checker():
+    await client.wait_until_ready()
+    channel = discord.Object(id=COMMIT_CHANNEL)
+    while not client.is_closed:
+        try:
+            gstamp = cache.get(cache="git_stamps", key="gdrive").value
+        except:
+            gstamp = "missing"
+            print("No stamp found for gdrive.")
+        g_msg, stamp = feed.check_file(gstamp)
+        # c_msg = False
+        if not gstamp == stamp:
+            cache.put(cache="git_stamps", key="gdrive", value=stamp)
+        if g_msg:
+            await client.send_message(channel, g_msg)
+        await asyncio.sleep(GDRIVE_TIMEOUT)
 
 async def commit_checker():
     await client.wait_until_ready()
