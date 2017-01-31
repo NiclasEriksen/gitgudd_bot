@@ -119,8 +119,8 @@ def test_embed():
     e = discord.Embed(
         title="New commit to godot",
         description="Merge pull request #7680 from cbscribe/master",
-        url="http://google.com",
-        color=0xEEAF20,
+        url="https://github.com/godotengine/godot/commit/36b6ba8e94d9afcb06aa2579bf627651f7ebfea0",
+        color=0xFF5f20,
     )
     e.set_footer("grammar fixes, it's -> its\n[ci skip]")
     e.set_author(
