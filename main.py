@@ -117,14 +117,16 @@ async def commit_checker():
 
 def test_embed():
     e = discord.Embed(
-        title="New commit",
+        title="New commit to godot",
         description="Merge pull request #7680 from cbscribe/master",
-        footer="grammar fixes, it's -> its\n[ci skip]",
         url="http://google.com",
         color=0xEEAF20,
     )
-
-    e.set_author(name="Akien", icon_url="https://avatars1.githubusercontent.com/u/4701338?v=3&s=72")
+    e.set_footer("grammar fixes, it's -> its\n[ci skip]")
+    e.set_author(
+        name="Akien",
+        url="https://github.com/akien-mga" 
+       icon_url="https://avatars1.githubusercontent.com/u/4701338?v=3&s=72")
     return e
 
 async def forum_checker():
