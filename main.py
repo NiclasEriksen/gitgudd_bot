@@ -128,12 +128,11 @@ def test_embed():
         icon_url="https://avatars1.githubusercontent.com/u/4701338?v=3&s=72"
     )
     return e
-
-def test_embed_full():
+def test_embed_commit():
     e = discord.Embed(
-        title="Merge pull request #7680 from cbscribe/master",
-        description="grammar fixes, it's -> its\n[ci skip]",
-        url="https://github.com/godotengine/godot/commit/36b6ba8e94d9afcb06aa2579bf627651f7ebfea0",
+        title="CollisionShape2D: Fix warning icon not updating.",
+        description="`CollisionPolygon2D` also had this problem.",
+        url="https://github.com/godotengine/godot/commit/16eee2f59b6d2567d7d15d9a2ff66c52e9705137",
         color=0xAFCCFF,
     )
     e.set_footer(
@@ -141,9 +140,27 @@ def test_embed_full():
         icon_url="https://cdnjs.cloudflare.com/ajax/libs/ionicons/2.0.1/png/512/clock.png"
     )
     e.set_author(
-        name="Akien",
-        url="https://github.com/akien-mga",
-        icon_url="https://avatars1.githubusercontent.com/u/4701338?v=3&s=72"
+        name="Hinsbart",
+        url="https://github.com/Hinsbart",
+        icon_url="https://avatars3.githubusercontent.com/u/8281916?v=3&s=72"
+    )
+    return e
+
+def test_embed_pr():
+    e = discord.Embed(
+        title="corrected ClassDB::instance() return type #7681",
+        description="The return type was void which is wrong, it's Variant. This caused some confusion on my part and the generated bindings for the WIP dlscript module have errors because of this.",
+        url="https://github.com/godotengine/godot/commit/36b6ba8e94d9afcb06aa2579bf627651f7ebfea0",
+        color=0xFF66FF,
+    )
+    e.set_footer(
+        text="Pull request | godot",
+        icon_url="https://cdnjs.cloudflare.com/ajax/libs/ionicons/2.0.1/png/512/pull-request.png"
+    )
+    e.set_author(
+        name="karoffel",
+        url="https://github.com/karoffel",
+        icon_url="https://avatars1.githubusercontent.com/u/5209613?v=3&s=88"
     )
     return e
 
@@ -219,8 +236,11 @@ async def on_message(message):
     elif message.content.startswith("!test_embed"):
         await client.send_message(message.channel, embed=test_embed())
 
-    elif message.content.startswith("!test_full"):
-        await client.send_message(message.channel, embed=test_embed_full())
+    elif message.content.startswith("!test_commit"):
+        await client.send_message(message.channel, embed=test_embed_commit())
+
+    elif message.content.startswith("!test_pr"):
+        await client.send_message(message.channel, embed=test_embed_pr())
 
     elif message.content.startswith("!revers"):
         async for msg in client.logs_from(
