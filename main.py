@@ -171,7 +171,7 @@ def test_embed_issue():
     MAX_DESC_LENGTH = 250
     e = discord.Embed(
         title="Starting the profiler freezes godot",
-        description="Linux alienware 4.8.0-34-generic #36-Ubuntu SMP Wed Dec 21 17:24:18 UTC 2016 x86_64 x86_64 x86_64 GNU/Linux\nGodot v2.1.2.stable.official\n\nIssue description:\nPressing on Start Profiling make Godot use 100% processor and freezes the editor."[0, MAX_DESC_LENGTH] + "...",
+        description="Linux alienware 4.8.0-34-generic #36-Ubuntu SMP Wed Dec 21 17:24:18 UTC 2016 x86_64 x86_64 x86_64 GNU/Linux\nGodot v2.1.2.stable.official\n\nIssue description:\nPressing on Start Profiling make Godot use 100\% \processor and freezes the editor."[0:MAX_DESC_LENGTH] + "...",
         url="https://github.com/godotengine/godot/commit/36b6ba8e94d9afcb06aa2579bf627651f7ebfea0",
         color=EMBED_ISSUE_COLOR,
     )
