@@ -117,8 +117,12 @@ async def commit_checker():
 
 def test_embed():
     e = discord.Embed(
-        title="Testetest", description="Mer test her, du vet."
+        title="Testetest",
+        description="Mer test her, du vet.",
+        url="http://google.com",
+        color="FF9900"
     )
+
     e.set_author(name="Birgeir", icon_url=client.user.default_avatar_url)
     return e
 
