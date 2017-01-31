@@ -122,7 +122,21 @@ def test_embed():
         url="https://github.com/godotengine/godot/commit/36b6ba8e94d9afcb06aa2579bf627651f7ebfea0",
         color=0xFF5f20,
     )
-    e.set_footer(str("grammar fixes, it's -> its\n[ci skip]"))
+    e.set_author(
+        name="Akien",
+        url="https://github.com/akien-mga",
+        icon_url="https://avatars1.githubusercontent.com/u/4701338?v=3&s=72"
+    )
+    return e
+
+def test_embed_full():
+    e = discord.Embed(
+        title="Merge pull request #7680 from cbscribe/master",
+        description="grammar fixes, it's -> its\n[ci skip]",
+        url="https://github.com/godotengine/godot/commit/36b6ba8e94d9afcb06aa2579bf627651f7ebfea0",
+        color=0xAFCCFF,
+    )
+    e.set_footer("New commit to godot"))
     e.set_author(
         name="Akien",
         url="https://github.com/akien-mga",
