@@ -120,7 +120,7 @@ def test_embed():
         title="New commit to godot",
         description="Merge pull request #7680 from cbscribe/master",
         url="https://github.com/godotengine/godot/commit/36b6ba8e94d9afcb06aa2579bf627651f7ebfea0",
-        color=0xFF5f20,
+        color=0xFF2010,
     )
     e.set_author(
         name="Akien",
@@ -215,6 +215,9 @@ async def on_message(message):
 
     elif message.content.startswith("!test_embed"):
         await client.send_message(message.channel, embed=test_embed())
+
+    elif message.content.startswith("!test_full"):
+        await client.send_message(message.channel, embed=test_embed_full())
 
     elif message.content.startswith("!revers"):
         async for msg in client.logs_from(
