@@ -137,8 +137,8 @@ def test_embed_full():
         color=0xAFCCFF,
     )
     e.set_footer(
-        text="**Commit**|*godot*",
-        icon_url="https://cdnjs.cloudflare.com/ajax/libs/octicons/4.4.0/svg/history.svg"
+        text="Commit | godot",
+        icon_url="https://cdnjs.cloudflare.com/ajax/libs/ionicons/2.0.1/png/512/clock.png"
     )
     e.set_author(
         name="Akien",
