@@ -117,13 +117,14 @@ async def commit_checker():
 
 def test_embed():
     e = discord.Embed(
-        title="Testetest",
-        description="Mer test her, du vet.",
+        title="New commit",
+        description="Merge pull request #7680 from cbscribe/master",
+        footer="grammar fixes, it's -> its\n[ci skip]",
         url="http://google.com",
-        color=0xFF9900,
+        color=0xEEAF20,
     )
 
-    e.set_author(name="Birgeir", icon_url=client.user.default_avatar_url)
+    e.set_author(name="Akien", icon_url="https://avatars1.githubusercontent.com/u/4701338?v=3&s=72")
     return e
 
 async def forum_checker():
