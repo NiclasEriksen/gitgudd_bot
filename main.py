@@ -120,7 +120,7 @@ def test_embed():
         title="Testetest",
         description="Mer test her, du vet.",
         url="http://google.com",
-        color="FF9900"
+        color=discord.Color("FF9900")
     )
 
     e.set_author(name="Birgeir", icon_url=client.user.default_avatar_url)
