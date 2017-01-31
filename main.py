@@ -264,6 +264,9 @@ async def on_message(message):
     elif message.content.startswith("!test_pr"):
         await client.send_message(message.channel, embed=test_embed_pr())
 
+    elif message.content.startswith("!test_issue"):
+        await client.send_message(message.channel, embed=test_embed_issue())
+
     elif message.content.startswith("!revers"):
         async for msg in client.logs_from(
             message.channel, limit=1, before=message
