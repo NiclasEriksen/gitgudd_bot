@@ -115,6 +115,13 @@ async def commit_checker():
                 await client.send_message(channel, c_msg)
         await asyncio.sleep(COMMIT_TIMEOUT)
 
+def test_embed():
+    e = discord.Embed(
+        title="Testetest", description="Mer test her, du vet."
+    )
+    e.set_author(name="Birgeir", icon_url=client.user.default_avatar_url)
+    return e
+
 async def forum_checker():
     await client.wait_until_ready()
     channel = discord.Object(id=FORUM_CHANNEL)
@@ -184,6 +191,8 @@ async def on_message(message):
         await client.send_message(message.channel, HELP_STRING)
         await client.delete_message(message)
 
+    elif message.content.startswith("!test_embed"):
+        await client.send_message(message.channel, embed=test_embed())
 
     elif message.content.startswith("!revers"):
         async for msg in client.logs_from(
