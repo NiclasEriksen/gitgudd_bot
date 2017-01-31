@@ -136,7 +136,10 @@ def test_embed_full():
         url="https://github.com/godotengine/godot/commit/36b6ba8e94d9afcb06aa2579bf627651f7ebfea0",
         color=0xAFCCFF,
     )
-    e.set_footer(text="New commit to godot")
+    e.set_footer(
+        text="**Commit**|*godot*",
+        icon_url="https://cdnjs.cloudflare.com/ajax/libs/octicons/4.4.0/svg/history.svg"
+    )
     e.set_author(
         name="Akien",
         url="https://github.com/akien-mga",
