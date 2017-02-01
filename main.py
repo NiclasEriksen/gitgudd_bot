@@ -279,8 +279,14 @@ async def on_message(message):
         async for log in client.logs_from(message.channel, limit=20):
             for e in log.embeds:
                 if "url" in e:
-                    print(e["url"])
-
+                    if "https://github.com/NiclasEriksen/lfm-healer/commit/1ad9e577ed60b25548061f57a5ba7df1c24f6e7a" == e["url"]:
+                        print("NOT POSTING!")
+                        break
+            else:   # No duplicates
+                continue    # Continue to next log item
+            break   # If there was duplicates, it reaches this
+        else:
+            print("POSTING!")
 
     elif message.content.startswith("!test_commit"):
         gho, _s = feed.check_commit("2016-12-28T20:02:57.848229Z")
