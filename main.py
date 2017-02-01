@@ -337,7 +337,7 @@ async def on_message(message):
             issue_number="#7688",
             repository="godot"
         )
-        if check_duplicate_url(message.channel, gh_object["url"]):
+        if await check_duplicate_url(message.channel, gh_object["url"]):
             await client.send_message(message.channel, "Nope.")
         else:
             await client.send_message(message.channel, embed=embed_gh(gh_object))
