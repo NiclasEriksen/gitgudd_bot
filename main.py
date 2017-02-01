@@ -136,7 +136,7 @@ async def commit_checker():
         if not cstamp == stamp:
             cache.put(cache="git_stamps", key="commit", value=stamp)
         if gh_obj:
-            if check_duplicate_url(channel, gh_obj["url"])
+            if check_duplicate_url(channel, gh_obj["url"]):
                 print("Commit already posted, abort!")
             else:
                 print("Posting commit!")
