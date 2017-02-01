@@ -130,7 +130,7 @@ def test_embed():
     return e
 
 def test_embed_gh(gh_object):
-    MAX_DESC_LINES      =   6
+    MAX_DESC_LINES      =   2
     EMBED_COMMIT_COLOR  =   0x1E54F8
     EMBED_PR_COLOR      =   0x84D430
     EMBED_ISSUE_COLOR   =   0xD44730
