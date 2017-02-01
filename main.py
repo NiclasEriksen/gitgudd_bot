@@ -84,11 +84,11 @@ async def delete_edit_timer(msg, time, error=False, call_msg=None):
         await client.delete_message(call_msg)
 
 
-def check_duplicate_url(channel, url):
+async def check_duplicate_url(channel, url):
     if not url:
         print("URL is blank, won't check for duplicate.")
         return False
-    async for log in client.logs_from(channel, limit=20):
+    for log in client.logs_from(channel, limit=20):
         for e in log.embeds:
             if "url" in e:
                 if url == e["url"]:
