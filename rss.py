@@ -64,9 +64,9 @@ class RSSFeed:
         else:
             return None, stamp
 
-    def check_forum(self, stamp):
+    def check_forum(self, url, stamp):
         msg = None
-        d = feedparser.parse(self.forum_url)
+        d = feedparser.parse(url)
         latest = d["items"][:5]
         try:
             old_stamp = datetime.datetime.fromtimestamp(float(stamp))
@@ -85,19 +85,6 @@ class RSSFeed:
         else:
             return False, float(mktime(old_stamp.utctimetuple()))
 
-    def format_forum_message(self, thread):
-        t = thread["title"]
-        c = thread["category"]
-        a = thread["author"]
-        l = thread["link"]
-        msg = "New forum thread by **{a}** in {c}\n```{t}```\n<{l}>".format(
-            a=a,
-            c=c,
-            t=t,
-            l=l,
-        )
-        return msg
-
     def parse_commit(self, stamp):
         d = feedparser.parse(self.commit_url)
         try:
@@ -111,22 +98,6 @@ class RSSFeed:
         except KeyError as e:
             print("Error in feed: {0}".format(e))
         return None, stamp
-
-    def format_commit_message(self, entry):
-        gho = GH_OBJECT
-        gho["type"] = GH_COMMIT
-        gho["title"] = entry["title"]
-        desc = html2text(entry["summary"]).lstrip()
-        desc = desc[desc.find("\n"):len(desc)].rstrip()
-        gho["desc"] = desc.lstrip().replace("    ", "")
-        gho["url"] = entry["link"]
-        gho["author"] = entry["author"]
-        if "href" in entry["author_detail"]:
-            gho["author_url"] = entry["author_detail"]["href"]
-        gho["avatar_icon_url"] = entry["media_thumbnail"][0]["url"]
-        gho["repository"] = entry["link"].split("/")[-3]
-
-        return gho
 
     def check_commit(self, stamp):
         e, newstamp = self.parse_commit(stamp)
@@ -190,32 +161,72 @@ class RSSFeed:
         messages.reverse()
         return messages, stamp
 
+    def format_commit_message(self, entry):
+        gho = GH_OBJECT.copy()
+        gho["type"] = GH_COMMIT
+        gho["title"] = entry["title"]
+        desc = html2text(entry["summary"]).lstrip()
+        desc = desc[desc.find("\n"):len(desc)].rstrip()
+        gho["desc"] = desc.lstrip().replace("    ", "")
+        gho["url"] = entry["link"]
+        gho["author"] = entry["author"]
+        if "href" in entry["author_detail"]:
+            gho["author_url"] = entry["author_detail"]["href"]
+        gho["avatar_icon_url"] = entry["media_thumbnail"][0]["url"]
+        gho["repository"] = entry["link"].split("/")[-3]
+
+        return gho
+
     def format_issue_message(self, e):
+        gho = GH_OBJECT.copy()
         try:
             e["pull_request"]
         except KeyError:
-            prefix = ":exclamation: **Ny issue:**"
+            gho["type"] = GH_ISSUE
         else:
-            prefix = ":question: **Ny pull request:**"
-        msg = "{pf} *#{n} av {u}*\n```{t}```\n<{url}>".format(
-            pf=prefix,
-            n=e["number"],
-            u=e["user"]["login"],
-            t=e["title"],
-            url=e["html_url"]
-        )
-        return msg
+            gho["type"] = GH_PR
+        gho["issue_number"] = "#" + str(e["number"])
+        gho["author"] = e["user"]["login"]
+        gho["author_url"] = e["user"]["html_url"]
+        gho["avatar_icon_url"] = e["user"]["avatar_url"] + "&s=32"
+        gho["url"] = e["html_url"]
+        gho["title"] = e["title"]
+        desc = e["body"].lstrip().replace("\r", "").rstrip().replace("    ", "")
+        gho["desc"] = desc
+        gho["repository"] = e["repository_url"].split("/")[-1]
+        return gho
 
+    def format_qa_message(self, thread):
+        gho = GH_OBJECT.copy()
+        gho["type"] = GH_QA
+        gho["title"] = thread["title"]
+        gho["url"] = thread["link"]
+        gho["repository"] = thread["category"]
+        return gho
+
+    def format_forum_message(self, thread):
+        gho = GH_OBJECT.copy()
+        gho["type"] = GH_FORUM
+        gho["title"] = thread["title"]
+        gho["desc"] = html2text(thread["description"])
+        gho["url"] = thread["link"]
+        gho["author"] = thread["author"]
+        gho["repository"] = thread["category"]
+
+        return gho
 
 if __name__ == "__main__":
     # For testing
     from time import sleep
     f = RSSFeed()
-    while True:
-        d = feedparser.parse("https://github.com/godotengine/godot/commits/master.atom")
-        d = d["items"][1]
-        print(f.format_commit_message(d))
-
-        #print(f.check_file("2016-12-28T20:02:57.848229Z"))
-        # print(f.check_commit())
-        sleep(10)
+    f.issue_url = "https://api.github.com/repos/godotengine/godot/issues?sort=created"
+    m, s = f.check_issue("2017-02-01T05:57:28Z")
+    for gh in m:
+        print("#################################")
+        print(gh)
+    d = feedparser.parse("https://github.com/godotengine/godot/commits/master.atom")
+    d = d["items"][1]
+    print(f.format_commit_message(d))
+    d = feedparser.parse("https://godotdevelopers.org/forum/discussions/feed.rss")
+    for t in d["items"][:5]:
+        print(f.format_forum_message(t))

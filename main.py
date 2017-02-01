@@ -121,9 +121,10 @@ async def commit_checker():
             cache.put(cache="git_stamps", key="commit", value=stamp)
         if gh_obj:
             async for log in client.logs_from(channel, limit=20):
-                if log.content == gh_obj:
-                    print("Commit already posted, abort!")
-                    break
+                for e in log.embeds:
+                    if e.url == gh_obj["url"]:
+                        print("Commit already posted, abort!")
+                        break
             else:
                 await client.send_message(channel, embed_gh(c_msg))
         await asyncio.sleep(COMMIT_TIMEOUT)
@@ -275,7 +276,10 @@ async def on_message(message):
         await client.delete_message(message)
 
     elif message.content.startswith("!test_embed"):
-        await client.send_message(message.channel, embed=test_embed())
+        async for log in client.logs_from(channel, limit=20):
+            for e in log.embeds:
+                print(e.url)
+
 
     elif message.content.startswith("!test_commit"):
         gho, _s = feed.check_commit("2016-12-28T20:02:57.848229Z")
