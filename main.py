@@ -120,7 +120,7 @@ async def commit_checker():
         if not cstamp == stamp:
             cache.put(cache="git_stamps", key="commit", value=stamp)
         if gh_obj:
-            async for log in client.logs_from(channel, limit=20):
+            async for log in client.logs_from(message.channel, limit=20):
                 for e in log.embeds:
                     if e.url == gh_obj["url"]:
                         print("Commit already posted, abort!")
