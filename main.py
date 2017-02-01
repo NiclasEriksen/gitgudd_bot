@@ -159,9 +159,9 @@ def test_embed_gh(gh_object):
         color = EMBED_ISSUE_COLOR
         icon_url = EMBED_ISSUE_ICON
 
-    footer_text = "{type} {in}| {r}".format(
+    footer_text = "{type} {issue_number}| {r}".format(
         type=post_type,
-        in=issue_number,
+        issue_number=issue_number,
         repository=gh_object["repository"]
     )
     e = discord.Embed(
