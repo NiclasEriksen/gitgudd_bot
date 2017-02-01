@@ -88,7 +88,7 @@ async def check_duplicate_url(channel, url):
     if not url:
         print("URL is blank, won't check for duplicate.")
         return False
-    for log in client.logs_from(channel, limit=20):
+    async for log in client.logs_from(channel, limit=20):
         for e in log.embeds:
             if "url" in e:
                 if url == e["url"]:
