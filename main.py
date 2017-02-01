@@ -162,7 +162,7 @@ def test_embed_gh(gh_object):
     footer_text = "{type} {issue_number}| {r}".format(
         type=post_type,
         issue_number=issue_number,
-        repository=gh_object["repository"]
+        r=gh_object["repository"]
     )
     e = discord.Embed(
         title=gh_object["title"],
