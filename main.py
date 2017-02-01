@@ -84,6 +84,22 @@ async def delete_edit_timer(msg, time, error=False, call_msg=None):
         await client.delete_message(call_msg)
 
 
+async def check_duplicate_url(channel, url):
+    if not url:
+        print("URL is blank, won't check for duplicate.")
+        return False
+    async for log in client.logs_from(channel, limit=20):
+        for e in log.embeds:
+            if "url" in e:
+                if url == e["url"]:
+                    return True
+        else:   # No duplicates
+            continue    # Continue to next log item
+        break   # If there was duplicates, it reaches this
+    else:
+        return False
+
+
 @client.event
 async def on_ready():
     print("Logged in as: {0}--{1}".format(client.user.name, client.user.id))
@@ -120,13 +136,11 @@ async def commit_checker():
         if not cstamp == stamp:
             cache.put(cache="git_stamps", key="commit", value=stamp)
         if gh_obj:
-            async for log in client.logs_from(channel, limit=20):
-                for e in log.embeds:
-                    if e.url == gh_obj["url"]:
-                        print("Commit already posted, abort!")
-                        break
+            if check_duplicate_url(channel, gh_obj["url"])
+                print("Commit already posted, abort!")
             else:
-                await client.send_message(channel, embed_gh(c_msg))
+                print("Posting commit!")
+                await client.send_message(channel, embed_gh(gh_obj))
         await asyncio.sleep(COMMIT_TIMEOUT)
 
 def test_embed():
@@ -306,21 +320,27 @@ async def on_message(message):
             issue_number="#7681",
             repository="godot"
         )
-        await client.send_message(message.channel, embed=embed_gh(gh_object))
+        if check_duplicate_url(message.channel, gh_object["url"]):
+            await.client.send_message(message.channel, "Nope.")
+        else:
+            await client.send_message(message.channel, embed=embed_gh(gh_object))
 
     elif message.content.startswith("!test_issue"):
         gh_object = dict(
             type=2,
             title="Starting the profiler freezes godot",
             desc="Linux alienware 4.8.0-34-generic #36-Ubuntu SMP Wed Dec 21 17:24:18 UTC 2016 x86_64 x86_64 x86_64 GNU/Linux\nGodot v2.1.2.stable.official\n\nIssue description:\nPressing on Start Profiling make Godot use 100\% processor and freezes the editor.",
-            url="https://github.com/godotengine/godot/commit/36b6ba8e94d9afcb06aa2579bf627651f7ebfea0",
+            url="https://github.com/godotengine/godot/commit/36b6ba8e94d9afcb06aa2579bf627651f7ebfea",
             author="razvanc-r",
             author_url="https://github.com/razvanc-r",
             avatar_icon_url="https://avatars0.githubusercontent.com/u/1177508?v=3&s=88",
             issue_number="#7688",
             repository="godot"
         )
-        await client.send_message(message.channel, embed=embed_gh(gh_object))
+        if check_duplicate_url(message.channel, gh_object["url"]):
+            await.client.send_message(message.channel, "Nope.")
+        else:
+            await client.send_message(message.channel, embed=embed_gh(gh_object))
 
     elif message.content.startswith("!test_qa"):
         gh_object = dict(
