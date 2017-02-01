@@ -140,7 +140,7 @@ async def commit_checker():
                 print("Commit already posted, abort!")
             else:
                 print("Posting commit!")
-                await client.send_message(channel, embed_gh(gh_obj))
+                await client.send_message(channel, embed=embed_gh(gh_obj))
         await asyncio.sleep(COMMIT_TIMEOUT)
 
 def test_embed():
@@ -320,7 +320,7 @@ async def on_message(message):
             issue_number="#7681",
             repository="godot"
         )
-        if check_duplicate_url(message.channel, gh_object["url"]):
+        if await check_duplicate_url(message.channel, gh_object["url"]):
             await client.send_message(message.channel, "Nope.")
         else:
             await client.send_message(message.channel, embed=embed_gh(gh_object))
