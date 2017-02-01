@@ -280,6 +280,7 @@ async def on_message(message):
     elif message.content.startswith("!test_commit"):
         gho, _s = feed.check_commit("2016-12-28T20:02:57.848229Z")
         gho["author_url"] = ""
+        gho["url"] = ""
         await client.send_message(message.channel, embed=embed_gh(gho))
 
     elif message.content.startswith("!test_pr"):
