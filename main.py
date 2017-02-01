@@ -278,7 +278,7 @@ async def on_message(message):
     elif message.content.startswith("!test_embed"):
         async for log in client.logs_from(message.channel, limit=20):
             for e in log.embeds:
-                if "url" in e.fields:
+                if "url" in e:
                     print(e["url"])
 
 
