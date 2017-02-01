@@ -1,6 +1,7 @@
 discord.py>=0.16.5
 feedparser>=5.2.1
 requests>=2.11.1
+html2text==2016.9.19
 iron_cache>=0.3.2
 google-api-python-client>=1.5.5
 pydrive>=1.3.1
