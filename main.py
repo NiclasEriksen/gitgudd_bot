@@ -115,17 +115,17 @@ async def commit_checker():
         except:
             cstamp = "missing"
             print("No stamp found for commits.")
-        c_msg, stamp = feed.check_commit(cstamp)
+        gh_obj, stamp = feed.check_commit(cstamp)
         # c_msg = False
         if not cstamp == stamp:
             cache.put(cache="git_stamps", key="commit", value=stamp)
-        if c_msg:
+        if gh_obj:
             async for log in client.logs_from(channel, limit=20):
-                if log.content == c_msg:
+                if log.content == gh_obj:
                     print("Commit already posted, abort!")
                     break
             else:
-                await client.send_message(channel, c_msg)
+                await client.send_message(channel, embed_gh(c_msg))
         await asyncio.sleep(COMMIT_TIMEOUT)
 
 def test_embed():
@@ -142,7 +142,7 @@ def test_embed():
     )
     return e
 
-def test_embed_gh(gh_object):
+def embed_gh(gh_object):
     tiny = False
     desc_text = gh_object["desc"]
     line_count = desc_text.count("\n") + 1
@@ -279,7 +279,8 @@ async def on_message(message):
 
     elif message.content.startswith("!test_commit"):
         gho, _s = feed.check_commit("2016-12-28T20:02:57.848229Z")
-        await client.send_message(message.channel, embed=test_embed_gh(gho))
+        gho["author_url"] = ""
+        await client.send_message(message.channel, embed=embed_gh(gho))
 
     elif message.content.startswith("!test_pr"):
         gh_object = dict(
@@ -293,7 +294,7 @@ async def on_message(message):
             issue_number="#7681",
             repository="godot"
         )
-        await client.send_message(message.channel, embed=test_embed_gh(gh_object))
+        await client.send_message(message.channel, embed=embed_gh(gh_object))
 
     elif message.content.startswith("!test_issue"):
         gh_object = dict(
@@ -307,7 +308,7 @@ async def on_message(message):
             issue_number="#7688",
             repository="godot"
         )
-        await client.send_message(message.channel, embed=test_embed_gh(gh_object))
+        await client.send_message(message.channel, embed=embed_gh(gh_object))
 
     elif message.content.startswith("!test_qa"):
         gh_object = dict(
@@ -321,7 +322,7 @@ async def on_message(message):
             issue_number=None,
             repository="Engine"
         )
-        await client.send_message(message.channel, embed=test_embed_gh(gh_object))
+        await client.send_message(message.channel, embed=embed_gh(gh_object))
 
     elif message.content.startswith("!test_forum"):
         gh_object = dict(
@@ -335,7 +336,7 @@ async def on_message(message):
             issue_number=None,
             repository="General Chat"
         )
-        await client.send_message(message.channel, embed=test_embed_gh(gh_object))
+        await client.send_message(message.channel, embed=embed_gh(gh_object))
 
     elif message.content.startswith("!revers"):
         async for msg in client.logs_from(

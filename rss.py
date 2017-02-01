@@ -1,5 +1,6 @@
 import feedparser
 import datetime
+from html2text import html2text
 from pydrive.auth import GoogleAuth
 from pydrive.drive import GoogleDrive
 from time import mktime, sleep
@@ -112,17 +113,18 @@ class RSSFeed:
         return None, stamp
 
     def format_commit_message(self, entry):
-        from html2text import html2text
         gho = GH_OBJECT
         gho["type"] = GH_COMMIT
         gho["title"] = entry["title"]
         desc = html2text(entry["summary"]).lstrip()
-        gho["desc"] = desc[desc.find("\n"):len(desc)].rstrip()
+        desc = desc[desc.find("\n"):len(desc)].rstrip()
+        gho["desc"] = desc.lstrip().replace("    ", "")
         gho["url"] = entry["link"]
-        gho["author"] = entry["author_detail"]["name"]
-        gho["author_url"] = entry["author_detail"]["href"]
+        gho["author"] = entry["author"]
+        if "href" in entry["author_detail"]:
+            gho["author_url"] = entry["author_detail"]["href"]
         gho["avatar_icon_url"] = entry["media_thumbnail"][0]["url"]
-        gho["repository"] = "lfm-healer"
+        gho["repository"] = entry["link"].split("/")[-3]
 
         return gho
 
@@ -210,7 +212,10 @@ if __name__ == "__main__":
     from time import sleep
     f = RSSFeed()
     while True:
-        f.check_commit("2016-12-28T20:02:57.848229Z")
+        d = feedparser.parse("https://github.com/godotengine/godot/commits/master.atom")
+        d = d["items"][1]
+        print(f.format_commit_message(d))
+
         #print(f.check_file("2016-12-28T20:02:57.848229Z"))
         # print(f.check_commit())
         sleep(10)
