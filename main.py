@@ -149,7 +149,7 @@ def test_embed_gh(gh_object):
 
     tiny = False
     desc_text = gh_object["desc"]
-    line_count = gh_object.count("\n") + 1
+    line_count = desc_text.count("\n") + 1
     if line_count > MAX_DESC_LINES:
         lbreaks = [n for n in range(len(desc_text)) if desc_text.find('\n', n) == n]
         desc_text = desc_text[0:lbreaks[MAX_DESC_LINES - 1]] + "\n....."
