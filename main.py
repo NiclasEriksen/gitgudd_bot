@@ -128,62 +128,56 @@ def test_embed():
         icon_url="https://avatars1.githubusercontent.com/u/4701338?v=3&s=72"
     )
     return e
-def test_embed_commit():
-    EMBED_COMMIT_COLOR = 0x1E54F8
-    e = discord.Embed(
-        title="CollisionShape2D: Fix warning icon not updating.",
-        description="`CollisionPolygon2D` also had this problem.",
-        url="https://github.com/godotengine/godot/commit/16eee2f59b6d2567d7d15d9a2ff66c52e9705137",
-        color=EMBED_COMMIT_COLOR,
-    )
-    e.set_footer(
-        text="Commit | godot",
-        icon_url="https://cdnjs.cloudflare.com/ajax/libs/ionicons/2.0.1/png/512/clock.png"
-    )
-    e.set_author(
-        name="Hinsbart",
-        url="https://github.com/Hinsbart",
-        icon_url="https://avatars3.githubusercontent.com/u/8281916?v=3&s=72"
-    )
-    return e
 
-def test_embed_pr():
-    EMBED_PR_COLOR = 0x84D430
-    e = discord.Embed(
-        title="corrected ClassDB::instance() return type",
-        description="The return type was void which is wrong, it's Variant. This caused some confusion on my part and the generated bindings for the WIP dlscript module have errors because of this.",
-        url="https://github.com/godotengine/godot/commit/36b6ba8e94d9afcb06aa2579bf627651f7ebfea0",
-        color=EMBED_PR_COLOR,
-    )
-    e.set_footer(
-        text="Pull request #7681 | godot",
-        icon_url="https://cdnjs.cloudflare.com/ajax/libs/ionicons/2.0.1/png/512/pull-request.png"
-    )
-    e.set_author(
-        name="karoffel",
-        url="https://github.com/karoffel",
-        icon_url="https://avatars1.githubusercontent.com/u/5209613?v=3&s=88"
-    )
-    return e
+def test_embed_gh(gh_object):
+    EMBED_COMMIT_COLOR  =   0x1E54F8
+    EMBED_PR_COLOR      =   0x84D430
+    EMBED_ISSUE_COLOR   =   0xD44730
+    EMBED_COMMIT_ICON   =   "https://cdnjs.cloudflare.com/ajax/libs/ionicons/2.0.1/png/512/clock.png"
+    EMBED_PR_ICON       =   "https://cdnjs.cloudflare.com/ajax/libs/ionicons/2.0.1/png/512/pull-request.png"
+    EMBED_ISSUE_ICON    =   "https://cdnjs.cloudflare.com/ajax/libs/ionicons/2.0.1/png/512/alert-circled.png"
+    GH_COMMIT           =   0
+    GH_PR               =   1
+    GH_ISSUE            =   2
 
-def test_embed_issue():
-    EMBED_ISSUE_COLOR = 0xD44730
-    MAX_DESC_LENGTH = 250
-    desc = "Linux alienware 4.8.0-34-generic #36-Ubuntu SMP Wed Dec 21 17:24:18 UTC 2016 x86_64 x86_64 x86_64 GNU/Linux\nGodot v2.1.2.stable.official\n\nIssue description:\nPressing on Start Profiling make Godot use 100\% \processor and freezes the editor."
+    desc_text = gh_object["desc"]
+    if len(desc_text) > 250:
+        desc_text = desc_text[0:MAX_DESC_LENGTH] + "\n..."
+    issue_number = gh_object["issue_number"] + " " if gh_object["issue_number"] else ""
+    post_type = icon_url = ""
+    color = 0xFFFFFF
+    if gh_object["type"] == GH_COMMIT:
+        post_type = "Commit"
+        color = EMBED_COMMIT_COLOR
+        icon_url = EMBED_COMMIT_ICON
+    elif gh_object["type"] == GH_PR:
+        post_type = "Pull request"
+        color = EMBED_PR_COLOR
+        icon_url = EMBED_PR_ICON
+    elif gh_object["type"] == GH_ISSUE:
+        post_type = "Issue"
+        color = EMBED_ISSUE_COLOR
+        icon_url = EMBED_ISSUE_ICON
+
+    footer_text = "{type} {in}| {r}".format(
+        type=post_type,
+        in=issue_number,
+        repository=gh_object["repository"]
+    )
     e = discord.Embed(
-        title="Starting the profiler freezes godot",
-        description=desc[0:MAX_DESC_LENGTH] + "\n...",
-        url="https://github.com/godotengine/godot/commit/36b6ba8e94d9afcb06aa2579bf627651f7ebfea0",
-        color=EMBED_ISSUE_COLOR,
+        title=gh_object["title"],
+        description=desc_text,
+        url=gh_object["url"],
+        color=color,
     )
     e.set_footer(
-        text="Issue #7688 | godot",
-        icon_url="https://cdnjs.cloudflare.com/ajax/libs/ionicons/2.0.1/png/512/alert-circled.png"
+        text=footer_text,
+        icon_url=icon_url
     )
     e.set_author(
-        name="razvanc-r",
-        url="https://github.com/razvanc-r",
-        icon_url="https://avatars0.githubusercontent.com/u/1177508?v=3&s=88"
+        name=gh_object["author"],
+        url=gh_object["author_url"],
+        icon_url=gh_object["avatar_icon_url"]
     )
     return e
 
@@ -260,13 +254,46 @@ async def on_message(message):
         await client.send_message(message.channel, embed=test_embed())
 
     elif message.content.startswith("!test_commit"):
-        await client.send_message(message.channel, embed=test_embed_commit())
+        gh_object = dict(
+            type=0,
+            title="CollisionShape2D: Fix warning icon not updating.",
+            desc="`CollisionPolygon2D` also had this problem.",
+            url="https://github.com/godotengine/godot/commit/16eee2f59b6d2567d7d15d9a2ff66c52e9705137",
+            author="Hinsbart",
+            author_url="https://github.com/Hinsbart",
+            avatar_icon_url="https://avatars3.githubusercontent.com/u/8281916?v=3&s=72",
+            issue_number=None,
+            repository="godot"
+        )
+        await client.send_message(message.channel, embed=test_embed_gh(gh_object))
 
     elif message.content.startswith("!test_pr"):
-        await client.send_message(message.channel, embed=test_embed_pr())
+        gh_object = dict(
+            type=1,
+            title="corrected ClassDB::instance() return type",
+            desc="The return type was void which is wrong, it's Variant. This caused some confusion on my part and the generated bindings for the WIP dlscript module have errors because of this.",
+            url="https://github.com/godotengine/godot/commit/36b6ba8e94d9afcb06aa2579bf627651f7ebfea0",
+            author="karoffel",
+            author_url="https://github.com/karoffel",
+            avatar_icon_url="https://avatars1.githubusercontent.com/u/5209613?v=3&s=88",
+            issue_number="#7681",
+            repository="godot"
+        )
+        await client.send_message(message.channel, embed=test_embed_gh(gh_object))
 
     elif message.content.startswith("!test_issue"):
-        await client.send_message(message.channel, embed=test_embed_issue())
+        gh_object = dict(
+            type=2,
+            title="Starting the profiler freezes godot",
+            desc="Linux alienware 4.8.0-34-generic #36-Ubuntu SMP Wed Dec 21 17:24:18 UTC 2016 x86_64 x86_64 x86_64 GNU/Linux\nGodot v2.1.2.stable.official\n\nIssue description:\nPressing on Start Profiling make Godot use 100\% processor and freezes the editor.",
+            url="https://github.com/godotengine/godot/commit/36b6ba8e94d9afcb06aa2579bf627651f7ebfea0",
+            author="razvanc-r",
+            author_url="https://github.com/razvanc-r",
+            avatar_icon_url="https://avatars0.githubusercontent.com/u/1177508?v=3&s=88",
+            issue_number="#7688",
+            repository="godot"
+        )
+        await client.send_message(message.channel, embed=test_embed_gh(gh_object))
 
     elif message.content.startswith("!revers"):
         async for msg in client.logs_from(
