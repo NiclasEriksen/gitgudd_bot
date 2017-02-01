@@ -130,18 +130,26 @@ def test_embed():
     return e
 
 def test_embed_gh(gh_object):
+    MAX_DESC_LENGTH     =   180
     EMBED_COMMIT_COLOR  =   0x1E54F8
     EMBED_PR_COLOR      =   0x84D430
     EMBED_ISSUE_COLOR   =   0xD44730
+    EMBED_QA_COLOR      =   0xF1E739
+    EMBED_FORUM_COLOR   =   0xD158F1
     EMBED_COMMIT_ICON   =   "https://cdnjs.cloudflare.com/ajax/libs/ionicons/2.0.1/png/512/clock.png"
     EMBED_PR_ICON       =   "https://cdnjs.cloudflare.com/ajax/libs/ionicons/2.0.1/png/512/pull-request.png"
     EMBED_ISSUE_ICON    =   "https://cdnjs.cloudflare.com/ajax/libs/ionicons/2.0.1/png/512/alert-circled.png"
+    EMBED_QA_ICON       =   "https://cdnjs.cloudflare.com/ajax/libs/ionicons/2.0.1/png/512/help-circled.png"
+    EMBED_FORUM_ICON    =   "https://cdnjs.cloudflare.com/ajax/libs/ionicons/2.0.1/png/512/chatbubbles.png"
     GH_COMMIT           =   0
     GH_PR               =   1
     GH_ISSUE            =   2
+    GH_QA               =   3
+    GH_FORUM            =   4
 
+    tiny = False
     desc_text = gh_object["desc"]
-    if len(desc_text) > 250:
+    if len(desc_text) > MAX_DESC_LENGTH:
         desc_text = desc_text[0:MAX_DESC_LENGTH] + "\n..."
     issue_number = gh_object["issue_number"] + " " if gh_object["issue_number"] else ""
     post_type = icon_url = ""
@@ -158,12 +166,29 @@ def test_embed_gh(gh_object):
         post_type = "Issue"
         color = EMBED_ISSUE_COLOR
         icon_url = EMBED_ISSUE_ICON
+    elif gh_object["type"] == GH_ISSUE:
+        post_type = "Issue"
+        color = EMBED_ISSUE_COLOR
+        icon_url = EMBED_ISSUE_ICON
+    elif gh_object["type"] == GH_QA:
+        post_type = "Question"
+        color = EMBED_QA_COLOR
+        icon_url = EMBED_QA_ICON
+        tiny = True
+    elif gh_object["type"] == GH_FORUM:
+        post_type = "Forum thread by " + gh_object["author"]
+        color = EMBED_FORUM_COLOR
+        icon_url = EMBED_FORUM_ICON
+        tiny = True
+    if tiny:
+        desc_text = discord.Embed.Empty
 
     footer_text = "{type} {issue_number}| {r}".format(
         type=post_type,
         issue_number=issue_number,
         r=gh_object["repository"]
     )
+
     e = discord.Embed(
         title=gh_object["title"],
         description=desc_text,
@@ -174,11 +199,12 @@ def test_embed_gh(gh_object):
         text=footer_text,
         icon_url=icon_url
     )
-    e.set_author(
-        name=gh_object["author"],
-        url=gh_object["author_url"],
-        icon_url=gh_object["avatar_icon_url"]
-    )
+    if not tiny:
+        e.set_author(
+            name=gh_object["author"],
+            url=gh_object["author_url"],
+            icon_url=gh_object["avatar_icon_url"]
+        )
     return e
 
 async def forum_checker():
@@ -292,6 +318,34 @@ async def on_message(message):
             avatar_icon_url="https://avatars0.githubusercontent.com/u/1177508?v=3&s=88",
             issue_number="#7688",
             repository="godot"
+        )
+        await client.send_message(message.channel, embed=test_embed_gh(gh_object))
+
+    elif message.content.startswith("!test_qa"):
+        gh_object = dict(
+            type=3,
+            title="Set Editor Layout as Default",
+            desc=None,
+            url="https://godotengine.org/qa/12018/set-editor-layout-as-default",
+            author="",
+            author_url="",
+            avatar_icon_url="",
+            issue_number=None,
+            repository="Engine"
+        )
+        await client.send_message(message.channel, embed=test_embed_gh(gh_object))
+
+    elif message.content.startswith("!test_forum"):
+        gh_object = dict(
+            type=4,
+            title="[Off-topic] Godot really feels life Delphi for games",
+            desc=None,
+            url="https://godotdevelopers.org/forum/discussion/18209/off-topic-godot-really-feels-life-delphi-for-games",
+            author="eye776",
+            author_url="",
+            avatar_icon_url="",
+            issue_number=None,
+            repository="General Chat"
         )
         await client.send_message(message.channel, embed=test_embed_gh(gh_object))
 
