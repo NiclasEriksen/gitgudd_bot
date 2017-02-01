@@ -325,7 +325,7 @@ async def on_message(message):
         gh_object = dict(
             type=3,
             title="Set Editor Layout as Default",
-            desc=None,
+            desc="",
             url="https://godotengine.org/qa/12018/set-editor-layout-as-default",
             author="",
             author_url="",
@@ -339,7 +339,7 @@ async def on_message(message):
         gh_object = dict(
             type=4,
             title="[Off-topic] Godot really feels life Delphi for games",
-            desc=None,
+            desc="",
             url="https://godotdevelopers.org/forum/discussion/18209/off-topic-godot-really-feels-life-delphi-for-games",
             author="eye776",
             author_url="",
