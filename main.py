@@ -5,7 +5,7 @@ import random
 import iron_cache
 import json
 import urllib.request
-from rss import RSSFeed
+from rss import RSSFeed, GH_OBJECT, GH_COMMIT, GH_PR, GH_ISSUE, GH_QA, GH_FORUM
 from snakk import Prat
 
 client = discord.Client()
@@ -31,6 +31,19 @@ FORUM_TIMEOUT = 10
 ISSUE_TIMEOUT = 60
 GDRIVE_TIMEOUT = 20
 DOFFEN_COUNT = 0
+# Embed settings
+MAX_DESC_LINES      =   4
+EMBED_COMMIT_COLOR  =   0x1E54F8
+EMBED_PR_COLOR      =   0x84D430
+EMBED_ISSUE_COLOR   =   0xD44730
+EMBED_QA_COLOR      =   0xF1E739
+EMBED_FORUM_COLOR   =   0x3D81A6
+EMBED_COMMIT_ICON   =   "https://cdnjs.cloudflare.com/ajax/libs/ionicons/2.0.1/png/512/clock.png"
+EMBED_PR_ICON       =   "https://cdnjs.cloudflare.com/ajax/libs/ionicons/2.0.1/png/512/pull-request.png"
+EMBED_ISSUE_ICON    =   "https://cdnjs.cloudflare.com/ajax/libs/ionicons/2.0.1/png/512/alert-circled.png"
+EMBED_QA_ICON       =   "https://cdnjs.cloudflare.com/ajax/libs/ionicons/2.0.1/png/512/help-circled.png"
+EMBED_FORUM_ICON    =   "https://cdnjs.cloudflare.com/ajax/libs/ionicons/2.0.1/png/512/chatbubbles.png"
+
 # How long to wait to delete messages
 FEEDBACK_DEL_TIMER = 5
 # How much XP to give on each messages
@@ -130,23 +143,6 @@ def test_embed():
     return e
 
 def test_embed_gh(gh_object):
-    MAX_DESC_LINES      =   2
-    EMBED_COMMIT_COLOR  =   0x1E54F8
-    EMBED_PR_COLOR      =   0x84D430
-    EMBED_ISSUE_COLOR   =   0xD44730
-    EMBED_QA_COLOR      =   0xF1E739
-    EMBED_FORUM_COLOR   =   0x3D81A6
-    EMBED_COMMIT_ICON   =   "https://cdnjs.cloudflare.com/ajax/libs/ionicons/2.0.1/png/512/clock.png"
-    EMBED_PR_ICON       =   "https://cdnjs.cloudflare.com/ajax/libs/ionicons/2.0.1/png/512/pull-request.png"
-    EMBED_ISSUE_ICON    =   "https://cdnjs.cloudflare.com/ajax/libs/ionicons/2.0.1/png/512/alert-circled.png"
-    EMBED_QA_ICON       =   "https://cdnjs.cloudflare.com/ajax/libs/ionicons/2.0.1/png/512/help-circled.png"
-    EMBED_FORUM_ICON    =   "https://cdnjs.cloudflare.com/ajax/libs/ionicons/2.0.1/png/512/chatbubbles.png"
-    GH_COMMIT           =   0
-    GH_PR               =   1
-    GH_ISSUE            =   2
-    GH_QA               =   3
-    GH_FORUM            =   4
-
     tiny = False
     desc_text = gh_object["desc"]
     line_count = desc_text.count("\n") + 1
@@ -282,17 +278,15 @@ async def on_message(message):
         await client.send_message(message.channel, embed=test_embed())
 
     elif message.content.startswith("!test_commit"):
-        gh_object = dict(
-            type=0,
-            title="CollisionShape2D: Fix warning icon not updating.",
-            desc="`CollisionPolygon2D` also had this problem.",
-            url="https://github.com/godotengine/godot/commit/16eee2f59b6d2567d7d15d9a2ff66c52e9705137",
-            author="Hinsbart",
-            author_url="https://github.com/Hinsbart",
-            avatar_icon_url="https://avatars3.githubusercontent.com/u/8281916?v=3&s=72",
-            issue_number=None,
-            repository="godot"
-        )
+        gh_object = GH_OBJECT
+        gh_object["type"] = 0
+        gh_object["title"] = "CollisionShape2D: Fix warning icon not updating."
+        gh_object["desc"] = "`CollisionPolygon2D` also had this problem."
+        gh_object["url"] = "https://github.com/godotengine/godot/commit/16eee2f59b6d2567d7d15d9a2ff66c52e9705137"
+        gh_object["author"] = "Hinsbart"
+        gh_object["author_url"] = "https://github.com/Hinsbart"
+        gh_object["avatar_icon_url"] = "https://avatars3.githubusercontent.com/u/8281916?v=3&s=72"
+        gh_object["repository"] = "godot"
         await client.send_message(message.channel, embed=test_embed_gh(gh_object))
 
     elif message.content.startswith("!test_pr"):

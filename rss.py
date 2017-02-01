@@ -9,7 +9,22 @@ COMMIT_URL = "https://github.com/NiclasEriksen/lfm-healer/commits/master.atom"
 ISSUE_URL = "https://api.github.com/repos/NiclasEriksen/lfm-healer/issues?sort=created"
 FORUM_URL = "https://godotdevelopers.org/forum/discussions/feed.rss"
 FILE_ID = "0By_JUDss2hEKXzRWRVNNOUtyYmM"
-
+GH_COMMIT           =   0
+GH_PR               =   1
+GH_ISSUE            =   2
+GH_QA               =   3
+GH_FORUM            =   4
+GH_OBJECT           =   dict(
+    type=0,
+    title="No title",
+    desc="No description",
+    url="https://github.com/godotengine/godot/",
+    author="No author",
+    author_url="https://github.com",
+    avatar_icon_url="",
+    issue_number=None,
+    repository=""
+)
 
 class RSSFeed:
 
