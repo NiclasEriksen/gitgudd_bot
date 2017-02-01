@@ -130,12 +130,12 @@ def test_embed():
     return e
 
 def test_embed_gh(gh_object):
-    MAX_DESC_LENGTH     =   180
+    MAX_DESC_LINES      =   6
     EMBED_COMMIT_COLOR  =   0x1E54F8
     EMBED_PR_COLOR      =   0x84D430
     EMBED_ISSUE_COLOR   =   0xD44730
     EMBED_QA_COLOR      =   0xF1E739
-    EMBED_FORUM_COLOR   =   0xD158F1
+    EMBED_FORUM_COLOR   =   0x3D81A6
     EMBED_COMMIT_ICON   =   "https://cdnjs.cloudflare.com/ajax/libs/ionicons/2.0.1/png/512/clock.png"
     EMBED_PR_ICON       =   "https://cdnjs.cloudflare.com/ajax/libs/ionicons/2.0.1/png/512/pull-request.png"
     EMBED_ISSUE_ICON    =   "https://cdnjs.cloudflare.com/ajax/libs/ionicons/2.0.1/png/512/alert-circled.png"
@@ -149,8 +149,10 @@ def test_embed_gh(gh_object):
 
     tiny = False
     desc_text = gh_object["desc"]
-    if len(desc_text) > MAX_DESC_LENGTH:
-        desc_text = desc_text[0:MAX_DESC_LENGTH] + "\n..."
+    line_count = gh_object.count("\n") + 1
+    if line_count > MAX_DESC_LINES:
+        lbreaks = [n for n in range(len(desc_text)) if desc_text.find('\n', n) == n]
+        desc_text = desc_text[0:lbreaks[MAX_DESC_LINES - 1]] + "\n....."
     issue_number = gh_object["issue_number"] + " " if gh_object["issue_number"] else ""
     post_type = icon_url = ""
     color = 0xFFFFFF
