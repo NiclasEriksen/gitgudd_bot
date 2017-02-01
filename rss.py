@@ -112,12 +112,19 @@ class RSSFeed:
         return None, stamp
 
     def format_commit_message(self, entry):
-        msg = ":outbox_tray: **Ny commit fra {1}:**\n```{0}```\n<{2}>".format(
-            entry["title"],
-            entry["author"],
-            entry["link"]
-        )
-        return msg
+        from html2text import html2text
+        gho = GH_OBJECT
+        gho["type"] = GH_COMMIT
+        gho["title"] = entry["title"]
+        desc = html2text(entry["summary"]).lstrip()
+        gho["desc"] = desc[desc.find("\n"):len(desc)].rstrip()
+        gho["url"] = entry["link"]
+        gho["author"] = entry["author_detail"]["name"]
+        gho["author_url"] = entry["author_detail"]["href"]
+        gho["avatar_icon_url"] = entry["media_thumbnail"][0]["url"]
+        gho["repository"] = "lfm-healer"
+
+        return gho
 
     def check_commit(self, stamp):
         e, newstamp = self.parse_commit(stamp)
@@ -203,6 +210,7 @@ if __name__ == "__main__":
     from time import sleep
     f = RSSFeed()
     while True:
-        print(f.check_file("2016-12-28T20:02:57.848229Z"))
+        f.check_commit("2016-12-28T20:02:57.848229Z")
+        #print(f.check_file("2016-12-28T20:02:57.848229Z"))
         # print(f.check_commit())
         sleep(10)

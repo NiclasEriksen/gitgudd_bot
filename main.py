@@ -278,16 +278,8 @@ async def on_message(message):
         await client.send_message(message.channel, embed=test_embed())
 
     elif message.content.startswith("!test_commit"):
-        gh_object = GH_OBJECT
-        gh_object["type"] = 0
-        gh_object["title"] = "CollisionShape2D: Fix warning icon not updating."
-        gh_object["desc"] = "`CollisionPolygon2D` also had this problem."
-        gh_object["url"] = "https://github.com/godotengine/godot/commit/16eee2f59b6d2567d7d15d9a2ff66c52e9705137"
-        gh_object["author"] = "Hinsbart"
-        gh_object["author_url"] = "https://github.com/Hinsbart"
-        gh_object["avatar_icon_url"] = "https://avatars3.githubusercontent.com/u/8281916?v=3&s=72"
-        gh_object["repository"] = "godot"
-        await client.send_message(message.channel, embed=test_embed_gh(gh_object))
+        gho, _s = feed.check_commit("2016-12-28T20:02:57.848229Z")
+        await client.send_message(message.channel, embed=test_embed_gh(gho))
 
     elif message.content.startswith("!test_pr"):
         gh_object = dict(
