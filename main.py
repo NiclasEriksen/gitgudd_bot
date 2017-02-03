@@ -5,7 +5,7 @@ import random
 import iron_cache
 import json
 import urllib.request
-from rss import RSSFeed, GH_OBJECT, GH_COMMIT, GH_PR, GH_ISSUE, GH_QA, GH_FORUM
+from rss import RSSFeed, GH_OBJECT, GH_COMMIT, GH_PR, GH_ISSUE, GH_QA, GH_FORUM, GH_FILE
 from snakk import Prat
 
 client = discord.Client()
@@ -43,6 +43,7 @@ EMBED_PR_ICON       =   "https://cdnjs.cloudflare.com/ajax/libs/ionicons/2.0.1/p
 EMBED_ISSUE_ICON    =   "https://cdnjs.cloudflare.com/ajax/libs/ionicons/2.0.1/png/512/alert-circled.png"
 EMBED_QA_ICON       =   "https://cdnjs.cloudflare.com/ajax/libs/ionicons/2.0.1/png/512/help-circled.png"
 EMBED_FORUM_ICON    =   "https://cdnjs.cloudflare.com/ajax/libs/ionicons/2.0.1/png/512/chatbubbles.png"
+EMBED_GDRIVE_ICON   =   "https://cdnjs.cloudflare.com/ajax/libs/ionicons/2.0.1/png/512/android-playstore.png"
 
 # How long to wait to delete messages
 FEEDBACK_DEL_TIMER = 5
@@ -119,7 +120,7 @@ async def gdrive_checker():
         if not gstamp == stamp:
             cache.put(cache="git_stamps", key="gdrive", value=stamp)
         if g_msg:
-            await client.send_message(channel, g_msg)
+            await client.send_message(channel, embed_gh(g_msg))
         await asyncio.sleep(GDRIVE_TIMEOUT)
 
 async def commit_checker():
@@ -192,6 +193,11 @@ def embed_gh(gh_object):
         post_type = "Forum thread by " + gh_object["author"]
         color = EMBED_FORUM_COLOR
         icon_url = EMBED_FORUM_ICON
+        tiny = True
+    elif gh_object["type"] == GH_FILE:
+        post_type = "Google Drive"
+        color = EMBED_PR_COLOR
+        icon_url = EMBED_GDRIVE_ICON
         tiny = True
     if tiny:
         desc_text = discord.Embed.Empty

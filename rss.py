@@ -15,6 +15,7 @@ GH_PR               =   1
 GH_ISSUE            =   2
 GH_QA               =   3
 GH_FORUM            =   4
+GH_FILE             =   5
 GH_OBJECT           =   dict(
     type=0,
     title="No title",
@@ -59,8 +60,13 @@ class RSSFeed:
             "%Y-%m-%dT%H:%M:%S.%fZ"
         )
         if filestamp > old_stamp:
-            msg = ":calling: **APK oppdatert:**\n<{0}>".format(apk["alternateLink"])
-            return msg, apk["modifiedDate"]
+            gho = GH_OBJECT.copy()
+            gho["type"] = GH_FILE
+            gho["title"] = "APK oppdatert"
+            gho["desc"] = ""
+            gho["url"] = apk["alternateLink"]
+            gho["repository"] = apk["title"] + " versjon " + apk["version"]
+            return gho, apk["modifiedDate"]
         else:
             return None, stamp
 
