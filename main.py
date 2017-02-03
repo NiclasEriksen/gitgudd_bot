@@ -120,7 +120,7 @@ async def gdrive_checker():
         if not gstamp == stamp:
             cache.put(cache="git_stamps", key="gdrive", value=stamp)
         if g_msg:
-            await client.send_message(channel, embed_gh(g_msg))
+            await client.send_message(channel, embed=embed_gh(g_msg))
         await asyncio.sleep(GDRIVE_TIMEOUT)
 
 async def commit_checker():
