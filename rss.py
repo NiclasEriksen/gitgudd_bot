@@ -65,7 +65,7 @@ class RSSFeed:
             gho["title"] = "APK oppdatert"
             gho["desc"] = ""
             gho["url"] = apk["alternateLink"]
-            gho["repository"] = apk["title"] + " versjon " + apk["headRevisionId"]
+            gho["repository"] = apk["title"]
             return gho, apk["modifiedDate"]
         else:
             return None, stamp
