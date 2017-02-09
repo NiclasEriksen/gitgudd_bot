@@ -295,6 +295,22 @@ async def on_message(message):
         await client.send_message(message.channel, HELP_STRING)
         await client.delete_message(message)
 
+    elif message.content.startswith("!test_react"):
+        print(message.author.nick if message.author.nick else message.author.name)
+
+    # elif message.content.startswith("!test_react"):
+    #     print("Testng reactiong")
+    #     emoji = "\U0001F3BA"
+    #     for e in message.server.emojis:
+    #         if e.name == "angryfaic":
+    #             emoji = e
+    #     await client.add_reaction(message, emoji)
+    #     #     if e.name == "trumpet":
+    #     #         emoji = e
+    #     #         break
+    #     # if emoji:
+    #     await client.add_reaction(message, ":trumpet:278630877330669579")
+
     elif message.content.startswith("!test_embed"):
         async for log in client.logs_from(message.channel, limit=20):
             for e in log.embeds:
