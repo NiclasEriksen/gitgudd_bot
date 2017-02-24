@@ -5,6 +5,7 @@ import random
 import iron_cache
 import json
 import urllib.request
+import logging
 from systemd import journal
 from rss import RSSFeed, GH_OBJECT, GH_COMMIT, GH_PR, GH_ISSUE, GH_QA, GH_FORUM, GH_FILE
 from snakk import Prat
@@ -89,7 +90,7 @@ async def delete_edit_timer(msg, time, error=False, call_msg=None):
 async def check_duplicate_url(channel, url):
     if not url:
         print("URL is blank, won't check for duplicate.")
-        journal.send("URL is blank, won't check for duplicate.")
+        journal.write("URL is blank, won't check for duplicate.")
         return False
     async for log in client.logs_from(channel, limit=20):
         for e in log.embeds:
@@ -107,8 +108,8 @@ async def check_duplicate_url(channel, url):
 async def on_ready():
     print("Logged in as: {0}--{1}".format(client.user.name, client.user.id))
     print("------")
-    journal.send("Logged in as: {0}--{1}".format(client.user.name, client.user.id))
-    journal.send("------")
+    journal.write("Logged in as: {0}--{1}".format(client.user.name, client.user.id))
+    journal.write("------")
 
 async def gdrive_checker():
     await client.wait_until_ready()
@@ -119,7 +120,7 @@ async def gdrive_checker():
         except:
             gstamp = "missing"
             print("No stamp found for gdrive.")
-            journal.send("No stamp found for gdrive.")
+            journal.write("No stamp found for gdrive.")
         g_msg, stamp = feed.check_file(gstamp)
         # c_msg = False
         if not gstamp == stamp:
@@ -137,7 +138,7 @@ async def commit_checker():
         except:
             cstamp = "missing"
             print("No stamp found for commits.")
-            journal.send("No stamp found for commits.")
+            journal.write("No stamp found for commits.")
         gh_obj, stamp = feed.check_commit(cstamp)
         # c_msg = False
         if not cstamp == stamp:
@@ -145,10 +146,10 @@ async def commit_checker():
         if gh_obj:
             if await check_duplicate_url(channel, gh_obj["url"]):
                 print("Commit already posted, abort!")
-                journal.send("Commit already posted, abort!")
+                journal.write("Commit already posted, abort!")
             else:
                 print("Posting commit!")
-                journal.send("Posting commit!")
+                journal.write("Posting commit!")
                 await client.send_message(channel, embed=embed_gh(gh_obj))
         await asyncio.sleep(COMMIT_TIMEOUT)
 
@@ -243,7 +244,7 @@ async def forum_checker():
         except:
             fstamp = "missing"
             print("No stamp found for forum.")
-            journal.send("No stamp found for forum.")
+            journal.write("No stamp found for forum.")
         f_msg, stamp = feed.check_forum(fstamp)
         if not fstamp == stamp:
             cache.put(cache="git_stamps", key="forum", value=stamp)
@@ -251,7 +252,7 @@ async def forum_checker():
             async for log in client.logs_from(channel, limit=20):
                 if log.content == f_msg:
                     print("Forum thread already posted, abort!")
-                    journal.send("Forum thread already posted, abort!")
+                    journal.write("Forum thread already posted, abort!")
                     break
             else:
                 await client.send_message(channel, f_msg)
@@ -266,7 +267,7 @@ async def issue_checker():
         except:
             cstamp = "missing"
             print("No stamp found for issues.")
-            journal.send("No stamp found for issues.")
+            journal.write("No stamp found for issues.")
         i_msgs, stamp = feed.check_issue(cstamp)
         if not cstamp == stamp:
             cache.put(cache="git_stamps", key="issue", value=stamp)
@@ -275,7 +276,7 @@ async def issue_checker():
                 for msg in i_msgs:
                     if log.content == msg:
                         print("Issue already posted, removing!")
-                        journal.send("Issue already posted, removing!")
+                        journal.write("Issue already posted, removing!")
                         i_msgs.remove(msg)
             for msg in i_msgs:
                 await client.send_message(channel, msg)
