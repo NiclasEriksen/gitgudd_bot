@@ -263,9 +263,11 @@ def embed_gh(gh_object):
 async def on_message(message):
 
     if message.author.id == client.user.id:
+        journal.send("Not granting XP to bot.")
         print("Not granting XP to bot.")
     elif message.content.startswith("!"):
         # Don't give XP for bot commands.
+        journal.send("Ignoring message as a command, no xp.")
         print("Ignoring message as a command, no xp.")
     else: 
         xp = 1 + len(message.content) // 80
@@ -276,8 +278,10 @@ async def on_message(message):
             session.query(User).filter_by(userid=id).update(
                 {"xp": User.xp + xp}
             )
+            journal.send("Awarded {0} xp to {1}".format(xp, message.author.name))
             print("Awarded {0} xp to {1}".format(xp, message.author.name))
         else:
+            journal.send("Creating new user row for {0}".format(id))
             print("Creating new user row for {0}".format(id))
             u = User(userid=id, xp=xp)
             session.add(u)
