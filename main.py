@@ -124,7 +124,10 @@ async def gdrive_checker():
         g_msg, stamp = feed.check_file(gstamp)
         # c_msg = False
         if not gstamp == stamp:
-            cache.put(cache="git_stamps", key="gdrive", value=stamp)
+            try:
+                cache.put(cache="git_stamps", key="gdrive", value=stamp)
+            except:
+                print("Error putting stamps for gdrive.")
         if g_msg:
             await client.send_message(channel, embed=embed_gh(g_msg))
         await asyncio.sleep(GDRIVE_TIMEOUT)
@@ -142,7 +145,10 @@ async def commit_checker():
         gh_obj, stamp = feed.check_commit(cstamp)
         # c_msg = False
         if not cstamp == stamp:
-            cache.put(cache="git_stamps", key="commit", value=stamp)
+            try:
+                cache.put(cache="git_stamps", key="commit", value=stamp)
+            except:
+                print("Error putting stamps for commit.")
         if gh_obj:
             if await check_duplicate_url(channel, gh_obj["url"]):
                 print("Commit already posted, abort!")
@@ -247,7 +253,10 @@ async def forum_checker():
             journal.send("No stamp found for forum.")
         f_msg, stamp = feed.check_forum(fstamp)
         if not fstamp == stamp:
-            cache.put(cache="git_stamps", key="forum", value=stamp)
+            try:
+                cache.put(cache="git_stamps", key="forum", value=stamp)
+            except:
+                print("Error putting stamps for forum.")
         if f_msg:
             async for log in client.logs_from(channel, limit=20):
                 if log.content == f_msg:
@@ -270,7 +279,10 @@ async def issue_checker():
             journal.send("No stamp found for issues.")
         i_msgs, stamp = feed.check_issue(cstamp)
         if not cstamp == stamp:
-            cache.put(cache="git_stamps", key="issue", value=stamp)
+            try:
+                cache.put(cache="git_stamps", key="issue", value=stamp)
+            except:
+                print("Error putting stamps for issue.")
         if i_msgs:
             async for log in client.logs_from(channel, limit=20):
                 for msg in i_msgs:
