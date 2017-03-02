@@ -142,6 +142,8 @@ async def gdrive_checker():
 
         if gh_obj:
             await client.send_message(channel, embed=embed_gh(gh_obj))
+
+        session.commit()
         await asyncio.sleep(GDRIVE_TIMEOUT)
 
 async def commit_checker():
