@@ -262,6 +262,28 @@ def embed_gh(gh_object):
 @client.event
 async def on_message(message):
 
+    if message.author.id == client.user.id:
+        print("Not granting XP to bot.")
+    elif message.content.startswith("!"):
+        # Don't give XP for bot commands.
+        print("Ignoring message as a command, no xp.")
+    else: 
+        xp = 1 + len(message.content) // 80
+        session = Session()
+        # Check if the user exists in the database and update the xp column.
+        # If user doesn't exist, create row.
+        if session.query(User).filter_by(userid=id).first():
+            session.query(User).filter_by(userid=id).update(
+                {"xp": User.xp + xp}
+            )
+            print("Awarded {0} xp to {1}".format(xp, message.author.name))
+        else:
+            print("Creating new user row for {0}".format(id))
+            u = User(userid=id, xp=xp)
+            session.add(u)
+
+        session.commit()
+
     if message.content.startswith("!help"):
         await client.send_message(message.channel, HELP_STRING)
         await client.delete_message(message)
