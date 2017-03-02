@@ -149,29 +149,36 @@ async def gdrive_checker():
 async def commit_checker():
     await client.wait_until_ready()
     channel = discord.Object(id=COMMIT_CHANNEL)
+
     while not client.is_closed:
-        try:
-            cstamp = cache.get(cache="git_stamps", key="commit").value
-        except:
-            cstamp = "missing"
-            print("No stamp found for commits.")
+        session = Session()
+        cstamp = session.query(Stamp).filter_by(descriptor="commit").first()
+        gh_obj, stamp = feed.check_commit(
+            cstamp.stamp if cstamp else "missing"
+        )
+
+        if cstamp:
+            if not cstamp.stamp == stamp:
+                # Updating stamp in db
+                cstamp.stamp = stamp
+        else:
+            dbstamp = Stamp(descriptor="commit", stamp=stamp)
+            session.add(dbstamp)
             journal.send("No stamp found for commits.")
-        gh_obj, stamp = feed.check_commit(cstamp)
-        # c_msg = False
-        if not cstamp == stamp:
-            try:
-                cache.put(cache="git_stamps", key="commit", value=stamp)
-            except:
-                print("Error putting stamps for commit.")
+            print("Adding new stamp to database for commits")
+
         if gh_obj:
             if await check_duplicate_url(channel, gh_obj["url"]):
                 print("Commit already posted, abort!")
                 journal.send("Commit already posted, abort!")
             else:
-                print("Posting commit!")
+                print("Posting Commit notification.")
                 journal.send("Posting commit!")
                 await client.send_message(channel, embed=embed_gh(gh_obj))
+
+        session.commit()
         await asyncio.sleep(COMMIT_TIMEOUT)
+
 
 def test_embed():
     e = discord.Embed(
