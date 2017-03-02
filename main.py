@@ -130,7 +130,7 @@ async def gdrive_checker():
     while not client.is_closed:
         session = Session()
         gstamp = session.query(Stamp).filter_by(descriptor="gdrive").first()
-        gh_obj, stamp = feed.check_file(gstamp if gstamp else "missing")
+        gh_obj, stamp = feed.check_file(gstamp.stamp if gstamp else "missing")
 
         if gstamp:
             if not gstamp.stamp == stamp:
