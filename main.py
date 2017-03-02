@@ -9,6 +9,8 @@ import logging
 from systemd import journal
 from rss import RSSFeed, GH_OBJECT, GH_COMMIT, GH_PR, GH_ISSUE, GH_QA, GH_FORUM, GH_FILE
 from snakk import Prat
+from models import Base, User, Stamp
+
 
 client = discord.Client()
 prat = Prat()
