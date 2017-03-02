@@ -6,6 +6,8 @@ import iron_cache
 import json
 import urllib.request
 import logging
+from sqlalchemy import create_engine
+from sqlalchemy.orm import sessionmaker
 from systemd import journal
 from rss import RSSFeed, GH_OBJECT, GH_COMMIT, GH_PR, GH_ISSUE, GH_QA, GH_FORUM, GH_FILE
 from snakk import Prat
@@ -15,6 +17,15 @@ from models import Base, User, Stamp
 client = discord.Client()
 prat = Prat()
 feed = RSSFeed()    # Initialize RSS-scraper, see rss.py for config.
+
+# When running script, initialize db engine and create sqlite database
+# with tables if not existing.
+engine = create_engine("sqlite:///app.db")
+# Session maker object, to instantiate sessions from
+Session = sessionmaker(bind=engine)
+# Ensure all tables are created.
+print("Ensuring database scheme is up to date.")
+Base.metadata.create_all(engine)
 
 # CONFIG #
 # If you have set your token as an environment variable
@@ -117,21 +128,20 @@ async def gdrive_checker():
     await client.wait_until_ready()
     channel = discord.Object(id=COMMIT_CHANNEL)
     while not client.is_closed:
-        try:
-            gstamp = cache.get(cache="git_stamps", key="gdrive").value
-        except:
-            gstamp = "missing"
-            print("No stamp found for gdrive.")
+        session = Session()
+        gstamp = session.query(Stamp).filter_by(descriptor="gdrive").first()
+        gh_obj, stamp = feed.check_file(gstamp if gstamp else "missing")
+
+        if gstamp:
+            if not gstamp.stamp == stamp:
+                gstamp.stamp = stamp
+        else:
             journal.send("No stamp found for gdrive.")
-        g_msg, stamp = feed.check_file(gstamp)
-        # c_msg = False
-        if not gstamp == stamp:
-            try:
-                cache.put(cache="git_stamps", key="gdrive", value=stamp)
-            except:
-                print("Error putting stamps for gdrive.")
-        if g_msg:
-            await client.send_message(channel, embed=embed_gh(g_msg))
+            dbstamp = Stamp(descriptor="gdrive", stamp=stamp)
+            session.add(dbstamp)
+
+        if gh_obj:
+            await client.send_message(channel, embed=embed_gh(gh_obj))
         await asyncio.sleep(GDRIVE_TIMEOUT)
 
 async def commit_checker():
