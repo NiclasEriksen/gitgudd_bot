@@ -262,6 +262,8 @@ def embed_gh(gh_object):
 @client.event
 async def on_message(message):
 
+    id = message.author.id
+
     if message.author.id == client.user.id:
         journal.send("Not granting XP to bot.")
         print("Not granting XP to bot.")
