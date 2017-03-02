@@ -2,8 +2,6 @@ import discord
 import asyncio
 import os
 import random
-import iron_cache
-import json
 import urllib.request
 import logging
 from sqlalchemy import create_engine
@@ -64,8 +62,6 @@ EMBED_GDRIVE_ICON   =   "https://cdnjs.cloudflare.com/ajax/libs/ionicons/2.0.1/p
 FEEDBACK_DEL_TIMER = 5
 # How much XP to give on each messages
 BASE_XP = 1
-
-cache = iron_cache.IronCache()
 
 
 async def trump_face(msg):
@@ -262,77 +258,6 @@ def embed_gh(gh_object):
         )
     return e
 
-async def forum_checker():
-    await client.wait_until_ready()
-    channel = discord.Object(id=FORUM_CHANNEL)
-    while not client.is_closed:
-        try:
-            fstamp = cache.get(cache="git_stamps", key="forum").value
-        except:
-            fstamp = "missing"
-            print("No stamp found for forum.")
-            journal.send("No stamp found for forum.")
-        f_msg, stamp = feed.check_forum(fstamp)
-        if not fstamp == stamp:
-            try:
-                cache.put(cache="git_stamps", key="forum", value=stamp)
-            except:
-                print("Error putting stamps for forum.")
-        if f_msg:
-            async for log in client.logs_from(channel, limit=20):
-                if log.content == f_msg:
-                    print("Forum thread already posted, abort!")
-                    journal.send("Forum thread already posted, abort!")
-                    break
-            else:
-                await client.send_message(channel, f_msg)
-        await asyncio.sleep(FORUM_TIMEOUT)
-
-async def issue_checker():
-    await client.wait_until_ready()
-    channel = discord.Object(id=ISSUE_CHANNEL)
-    while not client.is_closed:
-        try:
-            cstamp = cache.get(cache="git_stamps", key="issue").value
-        except:
-            cstamp = "missing"
-            print("No stamp found for issues.")
-            journal.send("No stamp found for issues.")
-        i_msgs, stamp = feed.check_issue(cstamp)
-        if not cstamp == stamp:
-            try:
-                cache.put(cache="git_stamps", key="issue", value=stamp)
-            except:
-                print("Error putting stamps for issue.")
-        if i_msgs:
-            async for log in client.logs_from(channel, limit=20):
-                for msg in i_msgs:
-                    if log.content == msg:
-                        print("Issue already posted, removing!")
-                        journal.send("Issue already posted, removing!")
-                        i_msgs.remove(msg)
-            for msg in i_msgs:
-                await client.send_message(channel, msg)
-        await asyncio.sleep(ISSUE_TIMEOUT)
-
-
-async def get_quote():
-    # http://quotes.stormconsultancy.co.uk/random.json
-    try:
-        r = urllib.request.urlopen(
-            "http://quotes.stormconsultancy.co.uk/random.json"
-        )
-        q = r.read().decode("utf-8")
-        js = json.loads(q)
-    except:
-        return False
-    else:
-        msg = "**{0}:**\n*{1}*".format(
-            js["author"],
-            js["quote"]
-        )
-        return msg
-
 
 @client.event
 async def on_message(message):
@@ -447,13 +372,6 @@ async def on_message(message):
         await client.send_message(message.channel, newmsg)
         await client.delete_message(message)
 
-    elif message.content.startswith("!quote"):
-        ch = message.channel
-        await client.delete_message(message)
-        a = await get_quote()
-        if a:
-            await client.send_message(ch, a)
-
     elif message.content.startswith("!trump"):
         await client.delete_message(message)
         await trump_face(message)
@@ -491,6 +409,4 @@ async def on_message(message):
 
 client.loop.create_task(commit_checker())
 client.loop.create_task(gdrive_checker())
-#client.loop.create_task(issue_checker())
-# client.loop.create_task(forum_checker())
 client.run(TOKEN)
