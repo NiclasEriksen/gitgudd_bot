@@ -91,7 +91,7 @@ def format_time(secs):
     return h, m, s 
 
 
-async def get_vm_list():
+def get_vm_list():
     msg = "```\nGjeldende virtuelle maskiner:\n" + "-" * 34
     for vm in proxmox.cluster.resources.get(type="vm"):
         desc = "{name}".format(
@@ -125,7 +125,7 @@ async def get_vm_list():
     return msg
 
 
-async def get_vm(vmid):
+def get_vm(vmid):
     for vm in proxmox.cluster.resources.get(type="vm"):
         if str(vm["vmid"]) == vmid or vm["name"] == vmid:
             return vm
@@ -356,7 +356,7 @@ async def on_message(message):
         await client.send_message(message.channel, newmsg)
         await client.delete_message(message)
 
-    elif message.content.startwith("!vm"):
+    elif message.content.startswith("!vm"):
         msg = ""
         if len(message.content) < 5 or message.content[3] != " ":
             msg = "Slik: !vm <navn eller id>"
