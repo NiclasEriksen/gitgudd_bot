@@ -37,6 +37,8 @@ FORUM_CHANNEL = "222168837490081792"
 HELP_STRING = """
 :book: **Kommandoer:**
 !help: *denne menyen*\n
+!serverstatus: *vis info fra serveren*\n
+!vm <navn eller id>: *vis info om en VM på serveren*\n
 *... og ingenting mer.*
 """
 # Seconds to wait between checking RSS feeds and API
