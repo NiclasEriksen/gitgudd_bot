@@ -142,7 +142,7 @@ def get_vm(vmid):
 
 def format_vm_msg(vm):
     desc_text = """
-**ID:** {vmid} **Status:** {status}\n
+**ID:** `{vmid}` **Status:** `{status}`\n
 **Uptime:** {uptime}\n
 **CPU:** {cpu:.1f}%\n
 **RAM:** {mem:.1f}%\n
