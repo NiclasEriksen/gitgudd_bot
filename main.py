@@ -52,7 +52,8 @@ EMBED_PR_COLOR      =   0x84D430
 EMBED_ISSUE_COLOR   =   0xD44730
 EMBED_QA_COLOR      =   0xF1E739
 EMBED_FORUM_COLOR   =   0x3D81A6
-EMBED_VM_COLOR      =   0xFF87DF
+EMBED_VM_UP_COLOR   =   0x92D712
+EMBED_VM_DOWN_COLOR =   0xD71220
 EMBED_COMMIT_ICON   =   "https://cdnjs.cloudflare.com/ajax/libs/ionicons/2.0.1/png/512/clock.png"
 EMBED_PR_ICON       =   "https://cdnjs.cloudflare.com/ajax/libs/ionicons/2.0.1/png/512/pull-request.png"
 EMBED_ISSUE_ICON    =   "https://cdnjs.cloudflare.com/ajax/libs/ionicons/2.0.1/png/512/alert-circled.png"
@@ -141,28 +142,35 @@ def get_vm(vmid):
 
 
 def format_vm_msg(vm):
-    desc_text = """
+    color = EMBED_VM_UP_COLOR
+    if vm["status"] == "stopped":
+        color = EMBED_VM_DOWN_COLOR
+        desc_text = "**ID:** `{0}` **Status:** `{1}`".format(
+            vm["vmid"], vm["status"]
+        )
+    else:
+        desc_text = """
 **ID:** `{vmid}` **Status:** `{status}`\n
 **Uptime:** {uptime}\n
 **CPU:** {cpu:.1f}%\n
 **RAM:** {mem:.1f}%\n
 **Net in:** {netin:.2f}MB\n
 **Net out:** {netout:.2f}MB
-""".format(
-        vmid=vm["vmid"],
-        status=vm["status"],
-        uptime=format_time(vm["uptime"]),
-        cpu=vm["cpu"] * 100.0,
-        mem=vm["mem"] / vm["maxmem"] * 100.0,
-        netin=vm["netin"] / 1024 / 1024,
-        netout=vm["netout"] / 1024 / 1024,
-    )
+        """.format(
+            vmid=vm["vmid"],
+            status=vm["status"],
+            uptime=format_time(vm["uptime"]),
+            cpu=vm["cpu"] * 100.0,
+            mem=vm["mem"] / vm["maxmem"] * 100.0,
+            netin=vm["netin"] / 1024 / 1024,
+            netout=vm["netout"] / 1024 / 1024,
+        )
 
     e = discord.Embed(
         title=None,
         description=desc_text,
         url=None,
-        color=EMBED_VM_COLOR,
+        color=color,
     )
     e.set_author(
         name=vm["name"],
@@ -423,6 +431,7 @@ async def on_message(message):
             if vm:
                 e = format_vm_msg(vm)
                 await client.send_message(message.channel, embed=e)
+                await client.delete_message(message)
                 return
             else:
                 msg = "Fant ikke den maskinen..."
