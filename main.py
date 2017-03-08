@@ -52,12 +52,14 @@ EMBED_PR_COLOR      =   0x84D430
 EMBED_ISSUE_COLOR   =   0xD44730
 EMBED_QA_COLOR      =   0xF1E739
 EMBED_FORUM_COLOR   =   0x3D81A6
+EMBED_VM_COLOR      =   0xFF87DF
 EMBED_COMMIT_ICON   =   "https://cdnjs.cloudflare.com/ajax/libs/ionicons/2.0.1/png/512/clock.png"
 EMBED_PR_ICON       =   "https://cdnjs.cloudflare.com/ajax/libs/ionicons/2.0.1/png/512/pull-request.png"
 EMBED_ISSUE_ICON    =   "https://cdnjs.cloudflare.com/ajax/libs/ionicons/2.0.1/png/512/alert-circled.png"
 EMBED_QA_ICON       =   "https://cdnjs.cloudflare.com/ajax/libs/ionicons/2.0.1/png/512/help-circled.png"
 EMBED_FORUM_ICON    =   "https://cdnjs.cloudflare.com/ajax/libs/ionicons/2.0.1/png/512/chatbubbles.png"
 EMBED_GDRIVE_ICON   =   "https://cdnjs.cloudflare.com/ajax/libs/ionicons/2.0.1/png/512/android-playstore.png"
+EMBED_VM_ICON       =   "https://cdnjs.cloudflare.com/ajax/libs/ionicons/2.0.1/png/512/ios7-cloud.png"
 
 # How long to wait to delete messages
 FEEDBACK_DEL_TIMER = 5
@@ -88,7 +90,17 @@ async def trump_face(msg):
 def format_time(secs):
     m, s = divmod(secs, 60)
     h, m = divmod(m, 60)
-    return h, m, s 
+    d = 0
+    if h >= 24:
+        d, h = divmod(h, 24)
+    msg = "{h}h{m}m{s}s".format(
+        h=h,
+        m=m,
+        s=s
+    )
+    if d:
+        msg = "{0}d".format(d) + msg
+    return msg
 
 
 def get_vm_list():
@@ -113,12 +125,8 @@ def get_vm_list():
             status=status
         )
         if not vm["status"] == "stopped":
-            h, m, s = format_time(int(vm["uptime"]))
-            msg += " | {h}h{m}m{s}s".format(
-                h=h,
-                m=m,
-                s=s
-            )
+            t = format_time(int(vm["uptime"]))
+            msg += " | {0}".format(t)
         else:
             msg += " |"
     msg += "\n```"
@@ -133,7 +141,56 @@ def get_vm(vmid):
 
 
 def format_vm_msg(vm):
-    return "{0} {1}".format(vm["name"], vm["vmid"])
+    desc_text = """
+**ID:** {vmid} **Status:** {status}\n
+**Uptime:** {uptime}\n
+**CPU:** {cpu}%\n
+**RAM:** {mem}%\n
+**Net in:** {netin:.2f}MB\n
+**Net out:** {netout:.2f}MB
+""".format(
+        vmid=vm["vmid"],
+        status=vm["status"],
+        uptime=format_time(vm["uptime"]),
+        cpu=vm["cpu"] * 100.0,
+        mem=vm["mem"] / vm["maxmem"] * 100.0,
+        netin=vm["netin"] / 1024 / 1024,
+        netout=vm["netout"] / 1024 / 1024,
+    )
+
+    e = discord.Embed(
+        title=None,
+        description=desc_text,
+        url=None,
+        color=EMBED_VM_COLOR,
+    )
+    e.set_author(
+        name=vm["name"],
+        url="https://tchosting.no:8006",
+        icon_url=EMBED_VM_ICON
+    )
+    return e
+
+
+"""
+{
+'name': 'webserver',
+'vmid': 101,
+'status': 'running',
+'template': 0,
+'uptime': 61889,
+'cpu': 0.00644082204464694,
+'maxcpu': 1,
+'mem': 439820288,
+'maxmem': 4294967296,
+'disk': 0,
+'maxdisk': 34359738368,
+'netin': 1304068676
+'netout': 35800396,
+'diskread': 2071160524,
+'diskwrite': 1899474944,
+}
+"""
 
 
 async def delete_edit_timer(msg, time, error=False, call_msg=None):
@@ -364,7 +421,9 @@ async def on_message(message):
             vmid = message.content[4:]
             vm = get_vm(vmid)
             if vm:
-                msg = format_vm_msg(vm)
+                e = format_vm_msg(vm)
+                await client.send_message(message.channel, embed=e)
+                return
             else:
                 msg = "Fant ikke den maskinen..."
         await client.send_message(message.channel, msg)
