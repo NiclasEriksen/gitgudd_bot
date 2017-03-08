@@ -347,103 +347,6 @@ async def on_message(message):
         await client.send_message(message.channel, HELP_STRING)
         await client.delete_message(message)
 
-    elif message.content.startswith("!test_react"):
-        print(message.author.nick if message.author.nick else message.author.name)
-
-    # elif message.content.startswith("!test_react"):
-    #     print("Testng reactiong")
-    #     emoji = "\U0001F3BA"
-    #     for e in message.server.emojis:
-    #         if e.name == "angryfaic":
-    #             emoji = e
-    #     await client.add_reaction(message, emoji)
-    #     #     if e.name == "trumpet":
-    #     #         emoji = e
-    #     #         break
-    #     # if emoji:
-    #     await client.add_reaction(message, ":trumpet:278630877330669579")
-
-    elif message.content.startswith("!test_embed"):
-        async for log in client.logs_from(message.channel, limit=20):
-            for e in log.embeds:
-                if "url" in e:
-                    if "https://github.com/NiclasEriksen/lfm-healer/commit/1ad9e577ed60b25548061f57a5ba7df1c24f6e7a" == e["url"]:
-                        print("NOT POSTING!")
-                        break
-            else:   # No duplicates
-                continue    # Continue to next log item
-            break   # If there was duplicates, it reaches this
-        else:
-            print("POSTING!")
-
-    elif message.content.startswith("!test_commit"):
-        gho, _s = feed.check_commit("2016-12-28T20:02:57.848229Z")
-        gho["author_url"] = ""
-        gho["url"] = ""
-        await client.send_message(message.channel, embed=embed_gh(gho))
-
-    elif message.content.startswith("!test_pr"):
-        gh_object = dict(
-            type=1,
-            title="corrected ClassDB::instance() return type",
-            desc="The return type was void which is wrong, it's Variant. This caused some confusion on my part and the generated bindings for the WIP dlscript module have errors because of this.",
-            url="https://github.com/godotengine/godot/commit/36b6ba8e94d9afcb06aa2579bf627651f7ebfea0",
-            author="karoffel",
-            author_url="https://github.com/karoffel",
-            avatar_icon_url="https://avatars1.githubusercontent.com/u/5209613?v=3&s=88",
-            issue_number="#7681",
-            repository="godot"
-        )
-        if await check_duplicate_url(message.channel, gh_object["url"]):
-            await client.send_message(message.channel, "Nope.")
-        else:
-            await client.send_message(message.channel, embed=embed_gh(gh_object))
-
-    elif message.content.startswith("!test_issue"):
-        gh_object = dict(
-            type=2,
-            title="Starting the profiler freezes godot",
-            desc="Linux alienware 4.8.0-34-generic #36-Ubuntu SMP Wed Dec 21 17:24:18 UTC 2016 x86_64 x86_64 x86_64 GNU/Linux\nGodot v2.1.2.stable.official\n\nIssue description:\nPressing on Start Profiling make Godot use 100\% processor and freezes the editor.",
-            url="https://github.com/godotengine/godot/commit/36b6ba8e94d9afcb06aa2579bf627651f7ebfea",
-            author="razvanc-r",
-            author_url="https://github.com/razvanc-r",
-            avatar_icon_url="https://avatars0.githubusercontent.com/u/1177508?v=3&s=88",
-            issue_number="#7688",
-            repository="godot"
-        )
-        if await check_duplicate_url(message.channel, gh_object["url"]):
-            await client.send_message(message.channel, "Nope.")
-        else:
-            await client.send_message(message.channel, embed=embed_gh(gh_object))
-
-    elif message.content.startswith("!test_qa"):
-        gh_object = dict(
-            type=3,
-            title="Set Editor Layout as Default",
-            desc="",
-            url="https://godotengine.org/qa/12018/set-editor-layout-as-default",
-            author="",
-            author_url="",
-            avatar_icon_url="",
-            issue_number=None,
-            repository="Engine"
-        )
-        await client.send_message(message.channel, embed=embed_gh(gh_object))
-
-    elif message.content.startswith("!test_forum"):
-        gh_object = dict(
-            type=4,
-            title="[Off-topic] Godot really feels life Delphi for games",
-            desc="",
-            url="https://godotdevelopers.org/forum/discussion/18209/off-topic-godot-really-feels-life-delphi-for-games",
-            author="eye776",
-            author_url="",
-            avatar_icon_url="",
-            issue_number=None,
-            repository="General Chat"
-        )
-        await client.send_message(message.channel, embed=embed_gh(gh_object))
-
     elif message.content.startswith("!revers"):
         async for msg in client.logs_from(
             message.channel, limit=1, before=message
@@ -452,6 +355,22 @@ async def on_message(message):
             await client.delete_message(msg)
         await client.send_message(message.channel, newmsg)
         await client.delete_message(message)
+
+    elif message.content.startwith("!vm"):
+        msg = ""
+        if len(message.content) < 5 or message.content[3] != " ":
+            msg = "Slik: !vm <navn eller id>"
+        else:
+            vmid = message.content[4:]
+            vm = get_vm(vmid)
+            if vm:
+                msg = format_vm_msg(vm)
+            else:
+                msg = "Fant ikke den maskinen..."
+        await client.send_message(message.channel, msg)
+
+    elif message.content.startswith("!serverstatus"):
+        await client.send_message(message.channel, get_vm_list())
 
     elif message.content.startswith("!trump"):
         await client.delete_message(message)
