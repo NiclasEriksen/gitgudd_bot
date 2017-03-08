@@ -37,6 +37,7 @@ FORUM_CHANNEL = "222168837490081792"
 HELP_STRING = """
 :book: **Kommandoer:**
 !help: *denne menyen*\n
+!xp: *hvis hvor mye xp folk har*\n
 !serverstatus: *vis info fra serveren*\n
 !vm <navn eller id>: *vis info om en VM på serveren*\n
 *... og ingenting mer.*
@@ -448,12 +449,15 @@ async def on_message(message):
         ranks = session.query(User).order_by(User.xp.desc()).all()
         ranks = ranks[:10]    # Slice. Perhaps use SQLAlchemy for this.
         msg = "**Mest aktive folk:**"
-
+        msg += "```"
         for u in ranks:
             m = message.server.get_member(u.userid)
             if m:
                 name = m.nick if m.nick else m.name
-                msg += "\n{0}: **{1}**".format(name, u.xp)
+                if len(name) < 15:
+                    name += (15 - len(name)) * " "
+                msg += "\n{0}: {1} xp".format(name, u.xp)
+        msg += "\n```"
 
         session.commit()
 
