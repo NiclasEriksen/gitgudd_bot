@@ -144,8 +144,8 @@ def format_vm_msg(vm):
     desc_text = """
 **ID:** {vmid} **Status:** {status}\n
 **Uptime:** {uptime}\n
-**CPU:** {cpu}%\n
-**RAM:** {mem}%\n
+**CPU:** {cpu:.1f}%\n
+**RAM:** {mem:.1f}%\n
 **Net in:** {netin:.2f}MB\n
 **Net out:** {netout:.2f}MB
 """.format(
