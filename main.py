@@ -456,7 +456,7 @@ async def on_message(message):
                 name = m.nick if m.nick else m.name
                 if len(name) < 15:
                     name += (15 - len(name)) * " "
-                msg += "\n{0}: {1} xp".format(name, u.xp)
+                msg += "\n{0}| {1} xp".format(name, u.xp)
         msg += "\n```"
 
         session.commit()
