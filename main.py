@@ -442,6 +442,24 @@ async def on_message(message):
     elif message.content.startswith("!serverstatus"):
         await client.send_message(message.channel, get_vm_list())
 
+    elif message.content.startswith("!xp"):
+        # Get's the top ranking users by their xp and posts a list of them.
+        session = Session()
+        ranks = session.query(User).order_by(User.xp.desc()).all()
+        ranks = ranks[:10]    # Slice. Perhaps use SQLAlchemy for this.
+        msg = "**Mest aktive folk:**"
+
+        for u in ranks:
+            m = message.server.get_member(u.userid)
+            if m:
+                name = m.nick if m.nick else m.name
+                msg += "\n{0}: **{1}**".format(name, u.xp)
+
+        session.commit()
+
+        await client.send_message(message.channel, msg)
+        await client.delete_message(message)
+
     elif message.content.startswith("!trump"):
         await client.delete_message(message)
         await trump_face(message)
