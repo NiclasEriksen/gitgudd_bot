@@ -10,6 +10,7 @@ from systemd import journal
 from rss import RSSFeed, GH_OBJECT, GH_COMMIT, GH_PR, GH_ISSUE, GH_QA, GH_FORUM, GH_FILE
 from snakk import Prat
 from models import Base, User, Stamp
+from serverstatus import proxmox
 
 
 client = discord.Client()
@@ -81,6 +82,58 @@ async def trump_face(msg):
         await client.edit_message(face_msg, face)
     await asyncio.sleep(1)
     await client.delete_message(face_msg)
+
+
+
+def format_time(secs):
+    m, s = divmod(secs, 60)
+    h, m = divmod(m, 60)
+    return h, m, s 
+
+
+async def get_vm_list():
+    msg = "```\nGjeldende virtuelle maskiner:\n" + "-" * 34
+    for vm in proxmox.cluster.resources.get(type="vm"):
+        desc = "{name}".format(
+            name=vm["name"],
+        )
+        if len(desc) < 12:
+            desc += " " * (12 - len(desc))
+        elif len(desc) > 12:
+            desc = desc[:12]
+
+        status = vm["status"]
+        if len(status) < 7:
+            status += " " * (7 - len(status))
+        elif len(status) > 7:
+            status = status[:7]
+
+        msg += "\n{desc} | {status}".format(
+            desc=desc,
+            status=status
+        )
+        if not vm["status"] == "stopped":
+            h, m, s = format_time(int(vm["uptime"]))
+            msg += " | {h}h{m}m{s}s".format(
+                h=h,
+                m=m,
+                s=s
+            )
+        else:
+            msg += " |"
+    msg += "\n```"
+    return msg
+
+
+async def get_vm(vmid):
+    for vm in proxmox.cluster.resources.get(type="vm"):
+        if str(vm["vmid"]) == vmid or vm["name"] == vmid:
+            return vm
+    return False
+
+
+def format_vm_msg(vm):
+    return "{0} {1}".format(vm["name"], vm["vmid"])
 
 
 async def delete_edit_timer(msg, time, error=False, call_msg=None):
@@ -436,5 +489,5 @@ async def on_message(message):
     #     )
 
 client.loop.create_task(commit_checker())
-client.loop.create_task(gdrive_checker())
+# client.loop.create_task(gdrive_checker())
 client.run(TOKEN)
