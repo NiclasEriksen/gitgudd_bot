@@ -29,10 +29,13 @@ Base.metadata.create_all(engine)
 # CONFIG #
 # If you have set your token as an environment variable
 TOKEN = os.environ.get("DISCORD_BOT_TOKEN")
+
 # Channel ID where bot will post github notifications
 COMMIT_CHANNEL = "222168837490081792"
 ISSUE_CHANNEL = "222168837490081792"
 FORUM_CHANNEL = "222168837490081792"
+PRAT_CHANNEL = "219187703609163776"
+
 # Message that bot returns on !help
 HELP_STRING = """
 :book: **Kommandoer:**
@@ -48,6 +51,7 @@ FORUM_TIMEOUT = 10
 ISSUE_TIMEOUT = 60
 GDRIVE_TIMEOUT = 20
 DOFFEN_COUNT = 0
+
 # Embed settings
 MAX_DESC_LINES      =   4
 EMBED_COMMIT_COLOR  =   0x1E54F8
@@ -88,7 +92,6 @@ async def trump_face(msg):
         await client.edit_message(face_msg, face)
     await asyncio.sleep(1)
     await client.delete_message(face_msg)
-
 
 
 def format_time(secs):
@@ -463,6 +466,10 @@ async def on_message(message):
 
         await client.send_message(message.channel, msg)
         await client.delete_message(message)
+
+    elif message.content.startswith("!snakk"):
+        msg = message.content[7:]
+        await client.send_message(PRAT_CHANNEL, msg)
 
     elif message.content.startswith("!trump"):
         await client.delete_message(message)
